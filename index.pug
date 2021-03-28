@@ -1,0 +1,50 @@
+include ./pug/message
+
+doctype html
+html(lang='en')
+    head
+        meta(charset='UTF-8')
+        title Чат
+        link(href='style/style.css' rel='stylesheet')
+        //link(rel='preconnect' href='https://fonts.gstatic.com')
+        //link(rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@1,300&display=swap')
+        link(rel='preconnect' href='https://fonts.gstatic.com')
+        link(href='https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&display=swap' rel='stylesheet')
+        script(src='https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js' type='text/javascript')
+        script(src='https://www.gstatic.com/firebasejs/8.3.0/firebase-auth.js' type='text/javascript')
+        script(src='https://www.gstatic.com/firebasejs/8.3.0/firebase-database.js' type='text/javascript')
+        script(src='js/index.js' type='module')
+
+
+    body
+        main.chat
+            //include pug/nav
+            //include pug/auth
+
+            aside.chat__pannel
+
+                .chat__row
+                    button.btn._menu
+                        include img/menu.svg
+                    input.chat__search(placeholder="Найти...")
+
+            .chat__content
+                .chat__name чат
+                    span 2 участника
+                .chat__history
+                    +message('./img/ava.jpg', [
+                        {text: 'Привет!', time: '17:55'},
+                        {text: 'Как дела?', time: '17:55'}
+                    ], false)
+                    +message('./img/ava2.jpg', [
+                        {text: 'Привет!', time: '17:58'},
+                        {text: 'Хорошо', time: '17:58'},
+                        {text: 'Как у тебя дела?', time: '17:58'}
+                    ], true)
+                    +message('./img/ava.jpg', [
+                        {text: 'У меня тоже все хорошо   !', time: '17:59'},
+                        {text: 'Рад был пообщаться', time: '17:59'}
+                    ], false)
+                form.form.chat__send
+                    textarea(row="1" placeholder="Введите сообщение...").scroll
+                    button(disabled).btn._size-small  Отправить

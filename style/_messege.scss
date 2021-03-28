@@ -1,0 +1,82 @@
+.message {
+  padding: 10px;
+  display: flex;
+  background: transparent;
+
+  &._my {
+     @include small-desktop{
+      justify-content: flex-end;
+    }
+  }
+
+  &__ava {
+    height: 30px;
+    width: 30px;
+    border-radius: 100%;
+    object-fit: contain;
+  }
+
+  &__block {
+    margin-left: 10px;
+    background: transparent;
+    @include small-desktop{
+      ._my & {
+        order: -1;
+        margin: 0 10px 0 0;
+      }
+    }
+
+  }
+
+  &__text {
+    padding: 7px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    line-height: 24px;
+    min-height: 33px;
+    position: relative;
+    border-radius: 5px;
+    margin-bottom: 5px;
+
+    ._my & {
+      background: var(--light-navy-blue);
+    }
+
+    span {
+      color: var(--bluish-grey);
+      margin-left: 10px;
+      align-self: end;
+      line-height: 1;
+      margin-top: auto;
+
+      ._my & {
+        background: var(--light-navy-blue)
+      }
+    }
+
+    &:first-child {
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: -8px;
+        bottom: 0;
+        background: transparent;
+        border: 8px solid transparent;
+        border-bottom: 7px solid var(--dark-four);
+
+
+        ._my & {
+          border-bottom: 7px solid var(--light-navy-blue);
+
+          @include small-desktop{
+            left: auto;
+            right: -8px;
+          }
+        }
+      }
+    }
+  }
+}

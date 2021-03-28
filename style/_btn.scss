@@ -1,0 +1,44 @@
+.btn {
+  background: var(--cool-blue);
+  border-radius: 5px;
+  max-width: 132px;
+  width: 100%;
+  border: none;
+  padding: 9px 17px;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all .3s ease;
+
+  &:hover {
+    //opacity: .8;
+    background: white;
+    color: var(--cool-blue);
+  }
+
+  &._menu {
+    padding: 0;
+    width: auto;
+    background: none;
+  }
+
+  &._uppercase {
+    text-transform: uppercase;
+  }
+
+  &._size-small {
+    font-size: 14px;
+    padding: 8px 10px;
+    line-height: 14px;
+  }
+
+  &._mt-40 {
+    margin-top: 40px;
+    max-width: 112px;
+  }
+
+  //display: flex;
+  //margin-left: auto;
+}

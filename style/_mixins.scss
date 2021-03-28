@@ -1,0 +1,48 @@
+//:root {
+//  //Разрешения экранов
+//  --phone-width: 320px;
+//  --smart-width: 600px;
+//  --tablet-width: 768px;
+//  --small-desktop-width: 1024px;
+//  --desktop-width: 1280px;
+//  --wide-desktop-width : 1600px;
+//}
+$phone-width: 320px;
+$smart-width: 600px;
+$tablet-width: 768px;
+$small-desktop-width: 1024px;
+$desktop-width: 1280px;
+$wide-desktop-width : 1600px;
+
+
+@mixin wide-desktop {
+  @media only screen and (max-width: #{$wide-desktop-width - 1px}) {
+    @content;
+  }
+}
+
+@mixin small-desktop {
+  @media only screen and (max-width: #{$desktop-width - 1px}) {
+    @content;
+  }
+}
+
+@mixin phone {
+  @media only screen and (max-width: #{$tablet-width - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media only screen and (max-width: $small-desktop-width) {
+    @content;
+  }
+}
+@mixin respond-to-max($custom) {
+  @media only screen and (max-width: $custom - 1) {
+    @content;
+  }
+}
+
+
+

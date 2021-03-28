@@ -1,0 +1,52 @@
+.form {
+  input, textarea {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 15px;
+    font-weight: 300;
+
+    border-bottom: 1px solid var(--slate);
+    //.valid & {
+    //  box-shadow: 0 0 3px #f37575;
+    //}
+    &::placeholder {
+      color: #9f9f9f;
+      font-family: 'Ubuntu', sans-serif;
+    }
+
+    &:focus-visible {
+      transition: var(--transition);
+      outline: none;
+      border-color: var(--cool-blue);
+    }
+  }
+
+  //&__title {
+  //  color: #ff8663;
+  //  font-weight: 500;
+  //  margin: 5px 0;
+  //}
+  &__item {
+    display: flex;
+    margin: 10px 0;
+
+    input {
+
+    }
+  }
+
+  &__btn {
+    &._center {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  //&__textarea {
+  //  display: flex;
+  //  margin: 10px 0;
+  //
+  //  textarea {
+  //  }
+  //}
+}

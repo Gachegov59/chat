@@ -1,0 +1,7 @@
+mixin message(img, text, my)
+    .message(class=my ? '_my': '')
+        img(src=`${img}`).message__ava
+        .message__block
+            each item in text
+                .message__text=item.text
+                    span.message__time=item.time

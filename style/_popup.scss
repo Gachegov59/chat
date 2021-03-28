@@ -1,0 +1,84 @@
+.popup {
+  background: white;
+  width: 379px;
+  height: auto;
+  //position: absolute;
+  top: 50px;
+  left: 150px;
+  overflow: hidden;
+
+  &__head {
+    background: #ff8663;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: 300;
+    color: white;
+    display: flex;
+
+    &-icon {
+      display: inline;
+      margin-right: 5px;
+      svg {
+        height: 14px;
+
+        path {
+          fill: white;
+        }
+      }
+    }
+  }
+
+  &__inner {
+    padding: 0 5px 5px;
+  }
+  &__close {
+    background: transparent;
+    border: none;
+    margin-left: auto;
+    cursor: pointer;
+    position: relative;
+    height: 16px;
+
+    &::before {
+    content: '';
+    width: 30px;
+    height: 30px;
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+    &:hover {
+      svg {
+        path {
+          fill: black;
+        }
+      }
+    }
+    svg {
+      height: 16px;
+      path {
+        transition: all .3s ease;
+      }
+    }
+  }
+  &__reviews {
+    margin-top: 15px;
+    height: 120px;
+    border-bottom: 1px solid #f0f0f0;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      height: 6px;
+      background-color: grey;
+    }
+  }
+
+  &__btn {
+    &._right {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+}

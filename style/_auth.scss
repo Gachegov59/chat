@@ -1,0 +1,74 @@
+.auth {
+  max-width: 516px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  padding: 40px 100px;
+  position: relative;
+
+  &__title {
+    font-size: 24px;
+    line-height: 24px;
+    margin-bottom: 0;
+  }
+
+  &__text {
+    text-align: center;
+    font-size: 16px;
+    color: var(--blue-grey);
+  }
+
+  &__close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    cursor: pointer;
+    z-index: 10;
+    &::before {
+      content: '';
+      width: 35px;
+      height: 35px;
+      display: block;
+      position: absolute;
+      background: none;
+      z-index: 10;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    svg {
+      path {
+        transition:var(--transition);
+      }
+
+    }
+    &:hover {
+      svg {
+        path {
+          fill: var(--lightblue);
+        }
+      }
+    }
+
+
+  }
+
+  &__icon {
+    width: 140px;
+    height: 140px;
+    border-radius: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    //background: rgba(var(--dark), .3);
+    background: #28303d; //todo: поменять на переменную
+    img {
+      background: transparent;
+      width: 66px;
+      object-fit: contain;
+    }
+  }
+}
