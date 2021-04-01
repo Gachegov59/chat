@@ -1,0 +1,65 @@
+.popup {
+  max-width: 516px;
+  background: var(--dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  padding: 4rem 5rem;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 15%), 0 5px 15px -7px rgb(0 0 0 / 50%);
+  position: absolute;
+  z-index: 100;
+  left: 50%;
+  transform: translate(-50%);
+  top: -1500px;
+  transition: var(--transition);
+  &._open {
+    top: 5rem;
+  }
+  &__title {
+    font-size: 2.4rem;
+    line-height: 2.4rem;
+    margin-bottom: 0;
+  }
+
+  &__text {
+    text-align: center;
+    font-size: 16px;
+    color: var(--blue-grey);
+  }
+
+  &__close {
+    position: absolute;
+    right: 2rem;
+    top: 2rem;
+    cursor: pointer;
+    z-index: 10;
+    &::before {
+      content: '';
+      width: 35px;
+      height: 35px;
+      display: block;
+      position: absolute;
+      background: none;
+      z-index: 10;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    svg {
+      path {
+        transition:var(--transition);
+      }
+
+    }
+    &:hover {
+      svg {
+        path {
+          fill: var(--lightblue);
+        }
+      }
+    }
+
+
+  }
+}

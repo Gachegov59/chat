@@ -2,10 +2,12 @@
 @import "style/vars";
 @import "style/mixins";
 @import "style/base";
-//@import "_form";
-//@import "_popup";
+
+//ui
 @import "style/btn";
+@import "style/popup";
 @import "style/auth";
 @import "style/form";
 @import "style/chat";
 @import "style/messege";
+@import "style/menu";

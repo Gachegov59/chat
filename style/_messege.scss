@@ -4,22 +4,22 @@
   background: transparent;
 
   &._my {
-     @include small-desktop{
+    @include small-desktop {
       justify-content: flex-end;
     }
   }
 
   &__ava {
-    height: 30px;
-    width: 30px;
+    height: 3rem;
+    width: 3rem;
     border-radius: 100%;
     object-fit: contain;
   }
 
   &__block {
-    margin-left: 10px;
+    margin-left: 1rem;
     background: transparent;
-    @include small-desktop{
+    @include small-desktop {
       ._my & {
         order: -1;
         margin: 0 10px 0 0;
@@ -29,16 +29,17 @@
   }
 
   &__text {
-    padding: 7px 16px;
+    padding: .7rem 1.6rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 14px;
-    line-height: 24px;
-    min-height: 33px;
+    font-size: 1.4rem;
+    line-height: 2.4rem;
+    min-height: 3.3rem;
     position: relative;
     border-radius: 5px;
     margin-bottom: 5px;
+    background: var(--dark-four);
 
     ._my & {
       background: var(--light-navy-blue);
@@ -71,7 +72,7 @@
         ._my & {
           border-bottom: 7px solid var(--light-navy-blue);
 
-          @include small-desktop{
+          @include small-desktop {
             left: auto;
             right: -8px;
           }

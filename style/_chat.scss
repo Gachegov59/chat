@@ -3,11 +3,16 @@
   height: 100%;
   display: flex;
 
-  &__pannel {
+  &__panel {
     max-width: 260px;
     width: 100%;
     border-right: 2px solid var(--dark-two);
-    padding: 10px 22px 10px 15px;
+    padding: 1rem 2rem 1rem 1.5rem;
+    position: relative;
+
+    @include phone {
+      max-width: 50px;
+    }
   }
 
   &__content {
@@ -15,17 +20,21 @@
     display: flex;
     flex-direction: column;
   }
-
+  &__col {
+    flex-grow: 1;
+  }
   &__history {
     background-color: var(--dark-two);
     flex-grow: 1;
     padding: 2rem 0;
+    max-height: calc(100% - 54px);
+    //overflow: scroll;
   }
 
   &__name {
-    padding: 10px 16px;
-    font-size: 14px;
-    line-height: 24px;
+    padding: 1rem 1.6rem;
+    font-size: 1.4rem;
+    line-height: 2.4rem;
     text-transform: capitalize;
 
     span {
@@ -33,35 +42,78 @@
       color: var(--blue-grey);
     }
   }
+
   &__row {
     display: flex;
+    z-index: 55;
   }
+
   &__search {
     background-color: var(--dark-three);
-    padding: 8px 9px;
-    font-size: 14px;
-    margin-left: 10px;
+    padding: .8rem .9rem;
+    font-size: 1.4rem;
+    margin-left: 1rem;
     border-radius: 5px;
+    width: 100%;
+    @include phone {
+      visibility: hidden;
+    }
   }
+
   &__send {
-    padding: 10px 14px;
+    padding: 1rem 1.4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     min-height: 54px;
+
+
     textarea {
       border-bottom: none;
-      font-size: 14px;
-      padding: 10px 0 0;
+      font-size: 1.4rem;
+      padding: 5px 0 0;
       height: 28px;
-      margin-right: 20px;
+      margin-right: 1.5rem;
       resize: none;
+
       &::placeholder {
         color: var(--slate-grey);
       }
     }
+
     button {
-      margin-top: auto;
+      //margin-top: auto;
+      &:hover {
+        span {
+          color: var(--cool-blue);
+        }
+      }
+      span {
+        pointer-events: none;
+        display: block;
+        @include phone {
+          display: none;
+        }
+      }
+
+      svg {
+        pointer-events: none;
+        display: none;
+        width: 2rem;
+        height: 2rem;
+        @include phone {
+          display: block;
+        }
+
+        path {
+          fill: var(--white);
+        }
+      }
+
+      @include phone {
+        max-width: 4rem;
+        padding: 0;
+      }
     }
   }
 }

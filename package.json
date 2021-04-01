@@ -1,0 +1,8 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "dependencies": {
+    "pug-cli": "^1.0.0-alpha6",
+    "random-string": "^0.2.0"
+  }
+}

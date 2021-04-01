@@ -32,8 +32,10 @@
 
 
   --transition: all .3s ease;
-  --base-font-size: 12px;
+  --base-font-size: 10px;
 
+
+  --animation-curve: cubic-bezier(1, 0, 0, 1);
 
   //Разрешения экранов
   --phone-width: 320px;

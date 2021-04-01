@@ -1,14 +1,14 @@
-.auth
-    .auth__close
+.auth.popup(data-action='true')
+    .popup__close.js-close
          include ../img/close.svg
     .auth__icon
         img(src="img/logo.png")
-    h1.auth__title Авторизация
-    p.auth__text Введите пожалуйста своё фио и ник для дальнейшей авторизации
-    form.form
+    h1.popup__title Авторизация
+    p.popup__text Введите пожалуйста своё фио и ник для дальнейшей авторизации
+    form.form(data-action='true')
         .form__item
-            input(placeholder="Введите ФИО")
+            input(placeholder="Введите ФИО").js-user-name
         .form__item
-            input(placeholder="Введите свой ник")
+            input(placeholder="Введите свой ник").js-user-nickName
         .form__btn._center
-            button.btn._uppercase._mt-40 войти
+            button.btn._uppercase._mt-40.js-enter войти
