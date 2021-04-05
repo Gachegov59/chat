@@ -47,9 +47,20 @@ html(lang='en')
                     script(id="messagesTemplate" type="text/x-handlebars-template")
                         div.
                             {{#each list}}
-                                <div class="message">
-                                    <p>{{name}}</p>
-                                    <p class="message__text">{{text}} <span>{{time}} </span></p>
+                                {{#if nickName}}
+                                    <div class="message _my">
+                                {{else}}
+                                    <div class="message">
+                                {{/if}}
+
+                                    {{#if (img)}}
+                                    <img src="${{img}}" class="message__ava" />
+                                    {{else}}
+                                    <span class="message__ava-name" title="{{name}}">{{name.[0]}}</span>
+                                    {{/if}}
+                                    <div class="message__block">
+                                        <p class="message__text">{{{text}}} <span>{{time}} </span></p>
+                                    </div>
                                 </div>
                             {{/each}}
                 //+message('./img/ava.jpg', [
@@ -58,7 +69,7 @@ html(lang='en')
                     //], false)
 
                 form.form.chat__send.js-form-send(data-action='true')
-                    textarea(row="1" placeholder="Введите сообщение...").scroll.js-text
+                    textarea(row="1" wrap="hard" placeholder="Введите сообщение...").scroll.js-text
                     button.btn._size-small.js-send
                         span Отправить
                         include img/send.svg

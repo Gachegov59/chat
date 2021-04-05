@@ -29,9 +29,35 @@
   &__item {
     display: flex;
     margin: 10px 0;
-
+    position: relative;
+    span {
+      position: absolute;
+      display: none;
+    }
     input {
 
+    }
+
+    &._isValid::after, &._isNoValid::after {
+      content: "✓";
+      position: absolute;
+      font-size: 12px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      background: var(--cool-blue);
+      color: #fff;
+      border-radius: 100%;
+    }
+    &._isNoValid::after {
+      content: "x";
+      background: #d72c2cc7;
     }
   }
 

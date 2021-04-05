@@ -14,22 +14,17 @@ firebase.initializeApp(firebaseConfig);
 window.Model = {
     async getMessages() {
         // return getDataFB
-
         return new Promise(function (resolve, reject) {
-
             const bd = firebase.database();
             const chat = bd.ref('chat');
-
             chat.on('value', (snapshot) => {
                 if (snapshot) {
                     resolve(snapshot.val())
                 } else {
                     reject( new Error(snapshot))
                 }
-
             });
         })
-
     },
     sendMessageInFB(message) {
         // console.log('writeUserData')

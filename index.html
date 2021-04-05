@@ -34,10 +34,10 @@
         <p class="popup__text">Введите пожалуйста своё фио и ник для дальнейшей авторизации</p>
         <form class="form" data-action="true">
           <div class="form__item">
-            <input class="js-user-name" placeholder="Введите ФИО">
+            <input class="js-user-name" placeholder="Введите ФИО" data-error="введите ФИО">
           </div>
           <div class="form__item">
-            <input class="js-user-nickName" placeholder="Введите свой ник">
+            <input class="js-user-nickName" placeholder="Введите свой ник" data-error="введите ник">
           </div>
           <div class="form__btn _center">
             <button class="btn _uppercase _mt-40 js-enter">войти</button>
@@ -77,10 +77,10 @@
 </svg>
 
           </div>
-          <div class="menu__urer-name">Алексей Трубин</div>
+          <div class="menu__urer-name js-panel-userName"></div>
         </div>
         <div class="menu__block _hide"><img class="menu__ava" src="./img/ava2.jpg">
-          <div class="menu__urer-name">Алексей Трубин</div>
+          <div class="menu__urer-name"></div>
         </div>
       </div>
       <aside class="chat__panel">
@@ -96,9 +96,20 @@
           <script id="messagesTemplate" type="text/x-handlebars-template">
             <div>
               {{#each list}}
-                  <div class="message">
-                      <p>{{name}}</p>
-                      <p class="message__text">{{text}} <span>{{time}} </span></p>
+                  {{#if nickName}}
+                      <div class="message _my">
+                  {{else}}
+                      <div class="message">
+                  {{/if}}
+              
+                      {{#if (img)}}
+                      <img src="${{img}}" class="message__ava" />
+                      {{else}}
+                      <span class="message__ava-name" title="{{name}}">{{name.[0]}}</span>
+                      {{/if}}
+                      <div class="message__block">
+                          <p class="message__text">{{{text}}} <span>{{time}} </span></p>
+                      </div>
                   </div>
               {{/each}}
             </div>
@@ -111,7 +122,7 @@
         
         -->
         <form class="form chat__send js-form-send" data-action="true">
-          <textarea class="scroll js-text" row="1" placeholder="Введите сообщение..."></textarea>
+          <textarea class="scroll js-text" row="1" wrap="hard" placeholder="Введите сообщение..."></textarea>
           <button class="btn _size-small js-send"><span>Отправить</span><svg enable-background="new 0 0 24 24" height="512" viewBox="0 0 24 24" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m8.75 17.612v4.638c0 .324.208.611.516.713.077.025.156.037.234.037.234 0 .46-.11.604-.306l2.713-3.692z"/><path d="m23.685.139c-.23-.163-.532-.185-.782-.054l-22.5 11.75c-.266.139-.423.423-.401.722.023.3.222.556.505.653l6.255 2.138 13.321-11.39-10.308 12.419 10.483 3.583c.078.026.16.04.242.04.136 0 .271-.037.39-.109.19-.116.319-.311.352-.53l2.75-18.5c.041-.28-.077-.558-.307-.722z"/></svg></button>
         </form>
       </div>

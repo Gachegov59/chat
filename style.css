@@ -63,7 +63,7 @@ input, textarea {
 .overlay::before {
   content: "";
   position: absolute;
-  z-index: 50;
+  z-index: 70;
   left: 0;
   right: 0;
   top: 0;
@@ -244,6 +244,32 @@ input, textarea {
 .form__item {
   display: flex;
   margin: 10px 0;
+  position: relative;
+}
+.form__item span {
+  position: absolute;
+  display: none;
+}
+.form__item._isValid::after, .form__item._isNoValid::after {
+  content: "✓";
+  position: absolute;
+  font-size: 12px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: var(--cool-blue);
+  color: #fff;
+  border-radius: 100%;
+}
+.form__item._isNoValid::after {
+  content: "x";
+  background: #d72c2cc7;
 }
 .form__btn._center {
   display: flex;
@@ -373,6 +399,16 @@ input, textarea {
   width: 3rem;
   border-radius: 100%;
   object-fit: contain;
+}
+.message__ava-name {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--cool-blue);
+  text-transform: uppercase;
+  height: 3rem;
+  width: 3rem;
+  border-radius: 100%;
 }
 .message__block {
   margin-left: 1rem;

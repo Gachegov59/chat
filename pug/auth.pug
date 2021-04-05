@@ -7,8 +7,9 @@
     p.popup__text Введите пожалуйста своё фио и ник для дальнейшей авторизации
     form.form(data-action='true')
         .form__item
-            input(placeholder="Введите ФИО").js-user-name
+            input(placeholder="Введите ФИО" data-error='введите ФИО').js-user-name
         .form__item
-            input(placeholder="Введите свой ник").js-user-nickName
+            input(placeholder="Введите свой ник" data-error='введите ник').js-user-nickName
+
         .form__btn._center
             button.btn._uppercase._mt-40.js-enter войти

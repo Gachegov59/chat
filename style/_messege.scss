@@ -14,6 +14,18 @@
     width: 3rem;
     border-radius: 100%;
     object-fit: contain;
+
+  }
+
+  &__ava-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--cool-blue);
+    text-transform: uppercase;
+    height: 3rem;
+    width: 3rem;
+    border-radius: 100%;
   }
 
   &__block {
