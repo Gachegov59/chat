@@ -35,28 +35,32 @@ window.Controller = {
         chatHistory.scrollTop = 9999;
     },
     sendMessage() {
-        if (this.text.value) {
+        // console.log('this.text.value', this.text.value)
+        if (this.text.value && this.text.value !== '\n' ) {
             let messageList = this.chat.messagesArr.list
-            let now = new Date()
+            let date = new Date()
+            let time =  date.getHours() + ':' + (date.getMinutes() < 10 ? 0 +''+ date.getMinutes(): date.getMinutes())
             let text = this.text.value.replace(/\n/g, '<br/>')
             let message = {
                 name: this.name,
                 userNickName: this.nickName,
-                messages: [[text, now.getHours() + ':' + now.getMinutes()]]
+                messages: [[text,time]]
             }
 
             if (!Controller.checkAuth(this.chat.chat)) {
                 Controller.checkAuth(this.chat.chat)
             } else {
-                if (this.chat.messagesArr.list.length > 0 && messageList[messageList.length - 1].nickName) {
+                if (messageList.length > 0 && messageList[messageList.length - 1].nickName) {
+                    console.log('last')
                     let messageKey = messageList[messageList.length - 1].key
                     let lastMessage = messageList[messageList.length - 1].messages
 
-                    console.log('lastMessage', lastMessage)
-                    lastMessage.push([text, now.getHours() + ':' + now.getMinutes()])
+                    // console.log('lastMessage', lastMessage)
+                    lastMessage.push([text, time])
                     Model.updateMessageInFB(messageKey, lastMessage)
 
                 } else {
+                    console.log('not last')
                     Model.sendMessageInFB(message)
                 }
             }
