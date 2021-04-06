@@ -9,6 +9,7 @@ window.Controller = {
         menu: document.querySelector('.js-menu'),
         inputName: document.querySelector('.js-user-name'),
         inputNickName: document.querySelector('.js-user-nickName'),
+        messagesArr: []
     },
     name: localStorage.getItem('name'),
     nickName: localStorage.getItem('nickName'),
@@ -17,50 +18,50 @@ window.Controller = {
 
     async renderMessages() {
         let chatHistory = document.querySelector('.chat__history')
-
         const messages = await Model.getMessages()
         const results = document.querySelector('#results');
 
-        let messagesArr = {list: []}
+        this.chat.messagesArr = {list: []}
         for (let item in messages) {
-            console.log(this.nickName, messages[item].userNickName)
-            messagesArr.list.push({
+            this.chat.messagesArr.list.push({
                 key: item,
                 name: messages[item].name,
-                nickName: messages[item].userNickName === this.nickName ? messages[item].userNickName : false,
-
-                text: messages[item].text.replace(/\n/g, '<br/>')
+                nickName: messages[item].userNickName === this.nickName,
+                messages: messages[item].messages
             })
         }
-        console.log('arr', messagesArr)
-        results.innerHTML = View.render('#messages', messagesArr);
+
+        results.innerHTML = View.render('#messages', this.chat.messagesArr);
         chatHistory.scrollTop = 9999;
     },
-    updateMessages() {
-        this.renderMessages()
-        console.log(212111321)
-    },
-    sendMessage(e, at) {
-        let tet = document.querySelector('.js-text')
+    sendMessage() {
         if (this.text.value) {
-            let text = this.text.value.replace('w', 'foobar\nw')
+            let messageList = this.chat.messagesArr.list
             let now = new Date()
+            let text = this.text.value.replace(/\n/g, '<br/>')
             let message = {
                 name: this.name,
                 userNickName: this.nickName,
-                text: this.text.value,
-                time: now.getHours() + ':' + now.getMinutes(),
-                // image:
+                messages: [[text, now.getHours() + ':' + now.getMinutes()]]
             }
-            console.log(message)
+
             if (!Controller.checkAuth(this.chat.chat)) {
                 Controller.checkAuth(this.chat.chat)
             } else {
-                Model.sendMessageInFB(message)
+                if (this.chat.messagesArr.list.length > 0 && messageList[messageList.length - 1].nickName) {
+                    let messageKey = messageList[messageList.length - 1].key
+                    let lastMessage = messageList[messageList.length - 1].messages
+
+                    console.log('lastMessage', lastMessage)
+                    lastMessage.push([text, now.getHours() + ':' + now.getMinutes()])
+                    Model.updateMessageInFB(messageKey, lastMessage)
+
+                } else {
+                    Model.sendMessageInFB(message)
+                }
             }
         }
         document.querySelector('.js-text').value = '';
-
     },
     userEnter(e, click) {
         //todo: рефакторинг
@@ -133,12 +134,13 @@ window.Controller = {
 
             } else {
                 View.closeAll(this.chat.chat, this.chat.menuBtn, this.chat.menu, this.chat.popups)
+
             }
         })
 
-        window.addEventListener("keyup", function (e) {
+        document.addEventListener("keyup", function (e) {
             if (e.keyCode == 27) {
-                View.closeAll(this.chat.chat, this.chat.menuBtn, this.chat.menu, this.chat.popups)
+                View.closeAll(Controller.chat.chat, Controller.chat.menuBtn, Controller.chat.menu, Controller.chat.popups)
             }
 
             if (e.target.localName === 'input') {
@@ -146,7 +148,11 @@ window.Controller = {
             }
 
             // if ((e.key === 'Control' || e.key === 'Enter') && e.ctrlKey){
-            if (e.ctrlKey && (e.keyCode === 13 || e.keyCode === 10)) {
+            // if (e.ctrlKey && (e.keyCode === 13 || e.keyCode === 10)) {
+            //     Controller.sendMessage()
+            // }
+
+            if (!e.shiftKey && !e.ctrlKey && (e.keyCode === 13 || e.keyCode === 10)) {
                 Controller.sendMessage()
             }
         });

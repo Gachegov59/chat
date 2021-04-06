@@ -66,7 +66,7 @@
     justify-content: space-between;
     align-items: center;
     min-height: 54px;
-
+    position: relative;
 
     textarea {
       border-bottom: none;
@@ -115,5 +115,13 @@
         padding: 0;
       }
     }
+  }
+  &__help {
+    font-size: 1rem;
+    position: absolute;
+    bottom: 3px;
+    left: 15px;
+    color: var(--white);
+    opacity: .7;
   }
 }

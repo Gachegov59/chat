@@ -59,7 +59,9 @@ html(lang='en')
                                     <span class="message__ava-name" title="{{name}}">{{name.[0]}}</span>
                                     {{/if}}
                                     <div class="message__block">
-                                        <p class="message__text">{{{text}}} <span>{{time}} </span></p>
+                                            {{#each messages}}
+                                                <div class="message__text"> {{{this.[0]}}} <span>{{this.[1]}} </span></div>
+                                            {{/each}}
                                     </div>
                                 </div>
                             {{/each}}
@@ -70,6 +72,7 @@ html(lang='en')
 
                 form.form.chat__send.js-form-send(data-action='true')
                     textarea(row="1" wrap="hard" placeholder="Введите сообщение...").scroll.js-text
+                    span.chat__help shift + enter
                     button.btn._size-small.js-send
                         span Отправить
                         include img/send.svg

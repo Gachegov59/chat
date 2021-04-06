@@ -52,6 +52,7 @@
     border-radius: 5px;
     margin-bottom: 5px;
     background: var(--dark-four);
+    overflow-wrap: anywhere;
 
     ._my & {
       background: var(--light-navy-blue);

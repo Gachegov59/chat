@@ -339,6 +339,7 @@ input, textarea {
   justify-content: space-between;
   align-items: center;
   min-height: 54px;
+  position: relative;
 }
 .chat__send textarea {
   border-bottom: none;
@@ -382,6 +383,14 @@ input, textarea {
     max-width: 4rem;
     padding: 0;
   }
+}
+.chat__help {
+  font-size: 1rem;
+  position: absolute;
+  bottom: 3px;
+  left: 15px;
+  color: var(--white);
+  opacity: 0.7;
 }
 
 .message {
@@ -432,6 +441,7 @@ input, textarea {
   border-radius: 5px;
   margin-bottom: 5px;
   background: var(--dark-four);
+  overflow-wrap: anywhere;
 }
 ._my .message__text {
   background: var(--light-navy-blue);

@@ -13,11 +13,11 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 window.Model = {
     async getMessages() {
-        // return getDataFB
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) { //todo: firebase.js удалить
             const bd = firebase.database();
             const chat = bd.ref('chat');
-            chat.on('value', (snapshot) => {
+            // chat.on('value', (snapshot) => { todo: проверить
+            chat.once('value', (snapshot) => {
                 if (snapshot) {
                     resolve(snapshot.val())
                 } else {
@@ -30,6 +30,13 @@ window.Model = {
         // console.log('writeUserData')
         firebase.database().ref('chat').push().set(message);
     },
+    updateMessageInFB(messageKey, messages) {
+        firebase.database().ref('chat/' +messageKey).update({
+            messages
+        });
+        Controller.renderMessages()
+    },
+
     // addUserInFB(message) {
     //     firebase.database().ref('users').push().set(message);
     // },
