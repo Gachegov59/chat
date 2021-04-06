@@ -17,7 +17,7 @@ window.Model = {
             const bd = firebase.database();
             const chat = bd.ref('chat');
             // chat.on('value', (snapshot) => { todo: проверить
-            chat.on('value', (snapshot) => {
+            chat.once('value', (snapshot) => {
                 if (snapshot) {
                     resolve(snapshot.val())
                 } else {
@@ -42,7 +42,9 @@ window.Model = {
     // },
     listenerNewMessages() {
         firebase.database().ref('chat').on('child_added', function (snapshot){
-            // console.log(snapshot.val())
+            Controller.renderMessages()
+        })
+        firebase.database().ref('chat').on('child_changed', function (snapshot){
             Controller.renderMessages()
         })
     }
