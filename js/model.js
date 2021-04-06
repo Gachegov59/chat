@@ -17,7 +17,7 @@ window.Model = {
             const bd = firebase.database();
             const chat = bd.ref('chat');
             // chat.on('value', (snapshot) => { todo: проверить
-            chat.once('value', (snapshot) => {
+            chat.on('value', (snapshot) => {
                 if (snapshot) {
                     resolve(snapshot.val())
                 } else {
