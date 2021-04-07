@@ -17,6 +17,7 @@ window.Controller = {
     avatar: '',
 
     async renderMessages() {
+
         let chatHistory = document.querySelector('.chat__history')
         const messages = await Model.getMessages()
         const results = document.querySelector('#results');
@@ -31,36 +32,47 @@ window.Controller = {
             })
         }
 
-        results.innerHTML = View.render('#messages', this.chat.messagesArr);
-        chatHistory.scrollTop = 9999;
+        results.innerHTML = View.render('#messages', Controller.chat.messagesArr);
+        chatHistory.scrollTop = 99999; //todo костыл с запасом
     },
     sendMessage() {
-        // console.log('this.text.value', this.text.value)
-        if (this.text.value && this.text.value !== '\n' ) {
+
+        let emptyMessage = false
+
+        let text = this.text.value.replace(/<(?!br\s*\/?)[^>]+>/g, '')
+            .replace(/\n/g, ' <br/>')
+            // УБИРАЕМ ПОВТОРЕНИЕ <br/> ПОДРЯД
+            .split(" ").filter(function (value, index, arr) {
+                return value === '<br/>' ? value !== arr[index + 1] : value
+            }).join(" ")
+        //ОСТАВЛЯЕМ ТОЛЬКО ПРЕОБРАЗОВАНИЕ ПЕРЕНОСА В <BR>
+        if (text.split(' ')[0] === "<br/>") {
+            emptyMessage = true
+        }
+
+        if (this.text.value && this.text.value !== '\n' && !emptyMessage) {
             let messageList = this.chat.messagesArr.list
             let date = new Date()
-            let time =  date.getHours() + ':' + (date.getMinutes() < 10 ? 0 +''+ date.getMinutes(): date.getMinutes())
-            let text = this.text.value.replace(/\n/g, '<br/>')
+            let minutes = date.getMinutes()
+            let time = date.getHours() + ':' + (minutes < 10 ? 0 + '' + minutes : minutes)
             let message = {
                 name: this.name,
                 userNickName: this.nickName,
-                messages: [[text,time]]
+                messages: [[text, time]]
             }
 
             if (!Controller.checkAuth(this.chat.chat)) {
                 Controller.checkAuth(this.chat.chat)
             } else {
+                // ЕСЛИ СООБЩЕНИЕ USER'S ПОВТОРЯЕТЬСЯ -> ОБЪЕДЕНЯЕТ В ГРУППУ
                 if (messageList.length > 0 && messageList[messageList.length - 1].nickName) {
-                    console.log('last')
-                    let messageKey = messageList[messageList.length - 1].key
                     let lastMessage = messageList[messageList.length - 1].messages
+                    let messageKey = messageList[messageList.length - 1].key
 
-                    // console.log('lastMessage', lastMessage)
                     lastMessage.push([text, time])
                     Model.updateMessageInFB(messageKey, lastMessage)
 
                 } else {
-                    console.log('not last')
                     Model.sendMessageInFB(message)
                 }
             }
@@ -98,7 +110,8 @@ window.Controller = {
         if (validName && validNickName) {
             localStorage.setItem('name', this.chat.inputName.value)
             localStorage.setItem('nickName', this.chat.inputNickName.value)
-            panelUserName.innerHTML = this.chat.inputName.value
+            // console.log(Controller.name)
+            panelUserName.innerHTML = Controller.name
             View.popupClose(this.chat.popups, this.chat.chat)
         }
     },
