@@ -1,4 +1,5 @@
 /*eslint-disable */
+
 document.addEventListener('DOMContentLoaded', () => {
     // let chat = document.querySelector('.chat')
 

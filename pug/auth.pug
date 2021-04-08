@@ -1,4 +1,4 @@
-.auth.popup(data-action='true')
+.auth.popup._open(data-action='true')
     .popup__close.js-close
          include ../img/close.svg
     .auth__icon
@@ -12,4 +12,7 @@
             input(placeholder="Введите свой ник" data-error='введите ник').js-user-nickName
 
         .form__btn._center
-            button.btn._uppercase._mt-40.js-enter войти
+            button.btn._uppercase._mt-20.js-enter войти
+        .form__btn._center
+            button.btn._wide-auto._uppercase._mt-15.js-auth-google войти через google
+                include ../img/google-icon.svg

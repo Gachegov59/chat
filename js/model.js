@@ -1,6 +1,7 @@
 // ПОЛУЧЕНИЕ ДАННЫХ
-
 // import {getDataFB} from "./firebase.js";
+// import firebase from "./libs/firebase.js";
+
 var firebaseConfig = {
     apiKey: "AIzaSyBKtblQjVE44WBQpkVNcgSPOeUmX-d2TCc",
     authDomain: "chat-60286.firebaseapp.com",
@@ -11,6 +12,7 @@ var firebaseConfig = {
     measurementId: "G-T7M5T4Q1J7"
 };
 firebase.initializeApp(firebaseConfig);
+
 window.Model = {
     async getMessages() {
         return new Promise(function (resolve, reject) { //todo: firebase.js удалить
@@ -21,7 +23,7 @@ window.Model = {
                 if (snapshot) {
                     resolve(snapshot.val())
                 } else {
-                    reject( new Error(snapshot))
+                    reject(new Error(snapshot))
                 }
             });
         })
@@ -31,7 +33,7 @@ window.Model = {
         firebase.database().ref('chat').push().set(message);
     },
     updateMessageInFB(messageKey, messages) {
-        firebase.database().ref('chat/' +messageKey).update({
+        firebase.database().ref('chat/' + messageKey).update({
             messages
         });
         Controller.renderMessages()
@@ -41,11 +43,24 @@ window.Model = {
     //     firebase.database().ref('users').push().set(message);
     // },
     listenerNewMessages() {
-        firebase.database().ref('chat').on('child_added', function (snapshot){
+        firebase.database().ref('chat').on('child_added', function (snapshot) {
             Controller.renderMessages()
         })
-        firebase.database().ref('chat').on('child_changed', function (snapshot){
+        firebase.database().ref('chat').on('child_changed', function (snapshot) {
             Controller.renderMessages()
         })
+    },
+    addUser(newInputName, newInputNickName) {
+        firebase.database().ref('users').push().set({
+            name: newInputName, nickName: newInputNickName
+        });
+        // return
+    },
+    async userEnterGoogle() {
+        // const firestore = firebase.firestore();
+
+        const provider = new firebase.auth.GoogleAuthProvider()
+        const auth = firebase.auth();
+        return await auth.signInWithPopup(provider)
     }
 }

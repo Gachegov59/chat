@@ -11,6 +11,15 @@
   color: white;
   cursor: pointer;
   transition: all .3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  svg {
+    width: 2rem;
+    height: 2rem;
+    margin-left: 1rem;
+  }
+
 
   &:hover {
     //opacity: .8;
@@ -30,6 +39,7 @@
     padding: 0;
     background: none;
     z-index: 55;
+    display: block;
     //transition: all .3s ease;
     width: 20px;
 
@@ -56,10 +66,12 @@
         &:nth-child(1) {
           transform: rotate(45deg);
         }
+
         &:nth-child(2) {
           visibility: hidden;
           opacity: 0;
         }
+
         &:nth-child(3) {
           margin-top: -14px;
           transform: rotate(-45deg);
@@ -80,11 +92,16 @@
     line-height: 14px;
   }
 
-  &._mt-40 {
-    margin-top: 4rem;
-    max-width: 13rem;
+  &._mt-20 {
+    margin-top: 2rem;
+  }
+  &._mt-15 {
+    margin-top: 1.5rem;
   }
 
+  &._wide-auto {
+    max-width: none;
+  }
   //display: flex;
   //margin-left: auto;
 }

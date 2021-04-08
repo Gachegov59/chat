@@ -2,6 +2,7 @@
   "name": "chat",
   "version": "1.0.0",
   "dependencies": {
+    "firebase": "^8.3.2",
     "pug-cli": "^1.0.0-alpha6",
     "random-string": "^0.2.0"
   }

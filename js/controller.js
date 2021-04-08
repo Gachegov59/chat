@@ -1,42 +1,49 @@
 // ПРОСЛОЙКА между model и view
-
 window.Controller = {
     chat: {
         chat: document.querySelector('.chat'),
         popups: document.querySelectorAll('.popup'),
+        ava: document.querySelector('.js-change-ava'),
         popupPhoto: document.querySelector('.js-popup-photo'),
         menuBtn: document.querySelector('.js-menu-btn'),
         menu: document.querySelector('.js-menu'),
         inputName: document.querySelector('.js-user-name'),
         inputNickName: document.querySelector('.js-user-nickName'),
+        panelUserName: document.querySelector('.js-panel-userName'),
+        btnEnterGoogle: document.querySelector('.js-enter-google'),
         messagesArr: []
     },
     name: localStorage.getItem('name'),
     nickName: localStorage.getItem('nickName'),
+    uid: localStorage.getItem('uid'),
     text: document.querySelector('.js-text'),
-    avatar: '',
+    avatar: localStorage.getItem('ava'),
+    id: '', //todo полумать как сделать реактивным
 
     async renderMessages() {
-
         let chatHistory = document.querySelector('.chat__history')
         const messages = await Model.getMessages()
         const results = document.querySelector('#results');
+
 
         this.chat.messagesArr = {list: []}
         for (let item in messages) {
             this.chat.messagesArr.list.push({
                 key: item,
                 name: messages[item].name,
-                nickName: messages[item].userNickName === this.nickName,
+                id: messages[item].id === this.id,
+                ava: messages[item].ava,
                 messages: messages[item].messages
             })
         }
-
+        console.log(this.chat.messagesArr.list)
         results.innerHTML = View.render('#messages', Controller.chat.messagesArr);
-        chatHistory.scrollTop = 99999; //todo костыл с запасом
+        chatHistory.scrollTop = chatHistory.scrollHeight;
     },
     sendMessage() {
-
+        const id = localStorage.getItem('uid') || localStorage.getItem('nickName')
+        this.id = id
+        console.log('id', id)
         let emptyMessage = false
 
         let text = this.text.value.replace(/<(?!br\s*\/?)[^>]+>/g, '')
@@ -49,7 +56,6 @@ window.Controller = {
         if (text.split(' ')[0] === "<br/>") {
             emptyMessage = true
         }
-
         if (this.text.value && this.text.value !== '\n' && !emptyMessage) {
             let messageList = this.chat.messagesArr.list
             let date = new Date()
@@ -57,15 +63,15 @@ window.Controller = {
             let time = date.getHours() + ':' + (minutes < 10 ? 0 + '' + minutes : minutes)
             let message = {
                 name: this.name,
-                userNickName: this.nickName,
+                id: id,
+                ava: this.avatar,
                 messages: [[text, time]]
             }
-
             if (!Controller.checkAuth(this.chat.chat)) {
                 Controller.checkAuth(this.chat.chat)
             } else {
                 // ЕСЛИ СООБЩЕНИЕ USER'S ПОВТОРЯЕТЬСЯ -> ОБЪЕДЕНЯЕТ В ГРУППУ
-                if (messageList.length > 0 && messageList[messageList.length - 1].nickName) {
+                if (messageList.length > 0 && messageList[messageList.length - 1].id) {
                     let lastMessage = messageList[messageList.length - 1].messages
                     let messageKey = messageList[messageList.length - 1].key
 
@@ -79,11 +85,26 @@ window.Controller = {
         }
         document.querySelector('.js-text').value = '';
     },
+
+    async userAuth() {
+        const auth = await Model.userEnterGoogle()
+        const name = auth.user.displayName
+        localStorage.setItem('name', name)
+        localStorage.setItem('nickName', null)
+        localStorage.setItem('uid', auth.user.uid)
+        localStorage.setItem('ava', auth.user.photoURL)
+
+        this.chat.panelUserName.innerHTML = name
+        // if (false) {
+        //     View.popupClose(this.chat.popups, this.chat.chat)
+        // }
+    },
     userEnter(e, click) {
         //todo: рефакторинг
-        let panelUserName = document.querySelector('.js-panel-userName')
         let validName = false
         let validNickName = false
+        let newInputName = this.chat.inputName.value
+        let newInputNickName = this.chat.inputNickName.value
 
         if (e.target.className.match('js-user-name') || click) {
             if (this.chat.inputName.value.length > 1) {
@@ -108,22 +129,30 @@ window.Controller = {
         }
 
         if (validName && validNickName) {
-            localStorage.setItem('name', this.chat.inputName.value)
-            localStorage.setItem('nickName', this.chat.inputNickName.value)
-            // console.log(Controller.name)
-            panelUserName.innerHTML = Controller.name
+            localStorage.setItem('name', newInputName)
+            localStorage.setItem('nickName', newInputNickName)
+
             View.popupClose(this.chat.popups, this.chat.chat)
+            Model.addUser(newInputName, newInputNickName)
+
+            this.chat.panelUserName.innerHTML = newInputName
         }
-    },
-    checkedIncoming() {
-        Model.listenerNewMessages()
     },
     checkAuth() {
-        if (!localStorage.getItem('name')) {
+        if (!(localStorage.getItem('nickName') || localStorage.getItem('uid'))) {
             View.auth(this.chat.chat)
         }
+        if (this.avatar) {
+            // console.log( this.chat.ava)
+            // console.log( this.avatar)
+            this.chat.ava.style.background = `url(${this.avatar})`
+            this.chat.ava.style.backgroundSize = `cover`
+            this.chat.ava.classList.add('_ava')
+        }
+        this.chat.panelUserName.innerHTML = Controller.name
         return localStorage.getItem('name')
     },
+
     eventsListener() {
         document.addEventListener('click', (e) => {
             e.preventDefault()
@@ -140,6 +169,9 @@ window.Controller = {
                 }
                 if (className.match('js-enter')) {
                     Controller.userEnter(e, true)
+                }
+                if (className.match('js-auth-google')) {
+                    Controller.userAuth(e)
                 }
                 if (className.match('js-send')) {
                     // Controller.sendMessage(e, this.chat.localName, this.chat.localNickName, this.chat.text, chat)
@@ -173,6 +205,9 @@ window.Controller = {
                 Controller.sendMessage()
             }
         });
+    },
+    checkedIncoming() {
+        Model.listenerNewMessages()
     },
 }
 

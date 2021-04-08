@@ -7,6 +7,7 @@
   background: var(--dark);
   transition: var(--transition);
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 15%), 0 5px 15px -7px rgb(0 0 0 / 50%);
+
   &._open {
     transition: var(--transition);
     z-index: 10;
@@ -28,7 +29,8 @@
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
-    &._hide{
+
+    &._hide {
       display: none;
     }
   }
@@ -37,6 +39,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background-size: cover;
     background: var(--dark-five);
     height: 8rem;
     width: 8rem;;
@@ -44,10 +47,17 @@
     object-fit: contain;
     margin-right: 1rem;
     cursor: pointer;
-    svg{
+
+    svg {
       width: 2rem;
       height: 2rem;
       pointer-events: none;
+    }
+
+    &._ava {
+      svg {
+        opacity: 0;
+      }
     }
   }
 
