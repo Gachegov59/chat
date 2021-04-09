@@ -1,5 +1,6 @@
 @charset "UTF-8";
 @import "style/normalize.css";
+@import "style/popup.css";
 :root {
   --dark: #17212b;
   --white: #e5e5e5;
@@ -165,61 +166,6 @@ input, textarea {
 }
 .btn._wide-auto {
   max-width: none;
-}
-
-.popup {
-  max-width: 516px;
-  background: var(--dark);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: auto;
-  padding: 3rem 4rem;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15), 0 5px 15px -7px rgba(0, 0, 0, 0.5);
-  position: absolute;
-  z-index: 100;
-  left: 50%;
-  transform: translate(-50%);
-  top: -1500px;
-  transition: var(--transition);
-}
-.popup._open {
-  top: 5rem;
-}
-.popup__title {
-  font-size: 2.4rem;
-  line-height: 2.4rem;
-  margin-bottom: 0;
-}
-.popup__text {
-  text-align: center;
-  font-size: 16px;
-  color: var(--blue-grey);
-}
-.popup__close {
-  position: absolute;
-  right: 2rem;
-  top: 2rem;
-  cursor: pointer;
-  z-index: 10;
-}
-.popup__close::before {
-  content: "";
-  width: 35px;
-  height: 35px;
-  display: block;
-  position: absolute;
-  background: none;
-  z-index: 10;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-.popup__close svg path {
-  transition: var(--transition);
-}
-.popup__close:hover svg path {
-  fill: var(--lightblue);
 }
 
 .auth__icon {
