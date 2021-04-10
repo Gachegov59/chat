@@ -25,8 +25,8 @@ window.Controller = {
 
     async renderMessages() {
        if(Controller.checkAuth()) {
-           console.log('renderMessages')
-           console.log(this.id)
+           // console.log('renderMessages')
+           // console.log(this.id)
            const messages = await Model.getMessages()
            const results = document.querySelector('#results');
 
@@ -46,7 +46,7 @@ window.Controller = {
        }
     },
     sendMessage() {
-        console.log('sendMessage')
+        // console.log('sendMessage')
         this.id = localStorage.getItem('uid') || localStorage.getItem('nickName')
         this.name = localStorage.getItem('name')
 
@@ -74,7 +74,7 @@ window.Controller = {
                 ava: this.avatar,
                 messages: [[text, time]]
             }
-            console.log(message)
+            // console.log(message)
             if (!Controller.checkAuth()) {
                 Controller.checkAuth()
             } else {
