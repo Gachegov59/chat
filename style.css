@@ -107,7 +107,6 @@ input, textarea {
 .btn svg {
   width: 2rem;
   height: 2rem;
-  margin-left: 1rem;
 }
 .btn:hover {
   background: white;
@@ -162,6 +161,10 @@ input, textarea {
 }
 .btn._mt-15 {
   margin-top: 1.5rem;
+}
+.btn._bg-white svg {
+  border-radius: 100%;
+  box-shadow: inset white 0 0 3px 10px, white 0 0 1px 2px;
 }
 .btn._wide-auto {
   max-width: none;
@@ -284,6 +287,9 @@ input, textarea {
 .form__item._isNoValid::after {
   content: "x";
   background: #d72c2cc7;
+}
+.form__btn svg {
+  margin-left: 1rem;
 }
 .form__btn._center {
   display: flex;

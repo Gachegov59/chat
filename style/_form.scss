@@ -30,13 +30,12 @@
     display: flex;
     margin: 10px 0;
     position: relative;
+
     span {
       position: absolute;
       display: none;
     }
-    input {
 
-    }
 
     &._isValid::after, &._isNoValid::after {
       content: "✓";
@@ -55,6 +54,7 @@
       color: #fff;
       border-radius: 100%;
     }
+
     &._isNoValid::after {
       content: "x";
       background: #d72c2cc7;
@@ -62,6 +62,9 @@
   }
 
   &__btn {
+    svg {
+      margin-left: 1rem;
+    }
     &._center {
       display: flex;
       justify-content: center;

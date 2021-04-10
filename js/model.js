@@ -54,8 +54,10 @@ window.Model = {
         firebase.database().ref('users').push().set({
             name: newInputName, nickName: newInputNickName
         });
+        View.addUser()
         // return
     },
+
     async userEnterGoogle() {
         // const firestore = firebase.firestore();
 

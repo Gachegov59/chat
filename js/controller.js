@@ -11,64 +11,72 @@ window.Controller = {
         inputNickName: document.querySelector('.js-user-nickName'),
         panelUserName: document.querySelector('.js-panel-userName'),
         btnEnterGoogle: document.querySelector('.js-enter-google'),
+
+        text: document.querySelector('.js-text'),
+        usersQuantity: 0,
         messagesArr: []
     },
     name: localStorage.getItem('name'),
-    nickName: localStorage.getItem('nickName'),
+    nickName: localStorage.getItem('nickName'),  //todo  проверять уникальность т.к используетсяь в id
     uid: localStorage.getItem('uid'),
-    text: document.querySelector('.js-text'),
     avatar: localStorage.getItem('ava'),
-    id: '', //todo полумать как сделать реактивным
+    // id: '', //todo полумать как сделать реактивным
+    id: localStorage.getItem('uid') || localStorage.getItem('nickName'),
 
     async renderMessages() {
-        let chatHistory = document.querySelector('.chat__history')
-        const messages = await Model.getMessages()
-        const results = document.querySelector('#results');
+       if(Controller.checkAuth()) {
+           console.log('renderMessages')
+           console.log(this.id)
+           const messages = await Model.getMessages()
+           const results = document.querySelector('#results');
 
-
-        this.chat.messagesArr = {list: []}
-        for (let item in messages) {
-            this.chat.messagesArr.list.push({
-                key: item,
-                name: messages[item].name,
-                id: messages[item].id === this.id,
-                ava: messages[item].ava,
-                messages: messages[item].messages
-            })
-        }
-        console.log(this.chat.messagesArr.list)
-        results.innerHTML = View.render('#messages', Controller.chat.messagesArr);
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+           this.chat.messagesArr = {list: []}
+           for (let item in messages) {
+               this.chat.messagesArr.list.push({
+                   key: item,
+                   name: messages[item].name,
+                   id: messages[item].id === this.id,
+                   ava: messages[item].ava,
+                   messages: messages[item].messages
+               })
+           }
+           // console.log(this.chat.messagesArr.list)
+           results.innerHTML = View.render('#messages', Controller.chat.messagesArr);
+           View.autoscroll()
+       }
     },
     sendMessage() {
-        const id = localStorage.getItem('uid') || localStorage.getItem('nickName')
-        this.id = id
-        console.log('id', id)
+        console.log('sendMessage')
+        this.id = localStorage.getItem('uid') || localStorage.getItem('nickName')
+        this.name = localStorage.getItem('name')
+
         let emptyMessage = false
 
-        let text = this.text.value.replace(/<(?!br\s*\/?)[^>]+>/g, '')
+        let text = this.chat.text.value
+            .replace(/<(?!br\s*\/?)[^>]+>/g, '')
             .replace(/\n/g, ' <br/>')
-            // УБИРАЕМ ПОВТОРЕНИЕ <br/> ПОДРЯД
-            .split(" ").filter(function (value, index, arr) {
+            .split(" ")
+            .filter(function (value, index, arr) {
                 return value === '<br/>' ? value !== arr[index + 1] : value
-            }).join(" ")
-        //ОСТАВЛЯЕМ ТОЛЬКО ПРЕОБРАЗОВАНИЕ ПЕРЕНОСА В <BR>
-        if (text.split(' ')[0] === "<br/>") {
+            }).join(" ")  // УБИРАЕМ ПОВТОРЕНИЕ <br/> ПОДРЯД
+        if (text.split(' ')[0] === "<br/>") {     //ОСТАВЛЯЕМ ТОЛЬКО ПРЕОБРАЗОВАНИЕ ПЕРЕНОСА В <BR>
             emptyMessage = true
         }
-        if (this.text.value && this.text.value !== '\n' && !emptyMessage) {
+
+        if (this.chat.text.value && this.chat.text.value !== '\n' && !emptyMessage) {
             let messageList = this.chat.messagesArr.list
             let date = new Date()
             let minutes = date.getMinutes()
             let time = date.getHours() + ':' + (minutes < 10 ? 0 + '' + minutes : minutes)
             let message = {
                 name: this.name,
-                id: id,
+                id: this.id,
                 ava: this.avatar,
                 messages: [[text, time]]
             }
-            if (!Controller.checkAuth(this.chat.chat)) {
-                Controller.checkAuth(this.chat.chat)
+            console.log(message)
+            if (!Controller.checkAuth()) {
+                Controller.checkAuth()
             } else {
                 // ЕСЛИ СООБЩЕНИЕ USER'S ПОВТОРЯЕТЬСЯ -> ОБЪЕДЕНЯЕТ В ГРУППУ
                 if (messageList.length > 0 && messageList[messageList.length - 1].id) {
@@ -89,24 +97,26 @@ window.Controller = {
     async userAuth() {
         const auth = await Model.userEnterGoogle()
         const name = auth.user.displayName
+        const uid = auth.user.uid
         localStorage.setItem('name', name)
         localStorage.setItem('nickName', null)
         localStorage.setItem('uid', auth.user.uid)
         localStorage.setItem('ava', auth.user.photoURL)
 
-        this.chat.panelUserName.innerHTML = name
-        // if (false) {
-        //     View.popupClose(this.chat.popups, this.chat.chat)
-        // }
+        this.id = uid
+        View.userAuthUpdateUI(name)
+        Controller.renderMessages()
+        if (name) {
+            View.popupClose(this.chat.popups, this.chat.chat)
+        }
     },
     userEnter(e, click) {
-        //todo: рефакторинг
         let validName = false
         let validNickName = false
         let newInputName = this.chat.inputName.value
         let newInputNickName = this.chat.inputNickName.value
 
-        if (e.target.className.match('js-user-name') || click) {
+        if (e.target.className.match('js-user-name') || click) {      //todo: рефакторинг
             if (this.chat.inputName.value.length > 1) {
                 validName = true
                 this.chat.inputName.parentNode.classList.add('_isValid')
@@ -116,7 +126,6 @@ window.Controller = {
                 this.chat.inputName.parentNode.classList.remove('_isValid')
             }
         }
-
         if (e.target.className.match('js-user-nickName') || click) {
             if (this.chat.inputNickName.value.length > 1) {
                 validNickName = true
@@ -132,10 +141,13 @@ window.Controller = {
             localStorage.setItem('name', newInputName)
             localStorage.setItem('nickName', newInputNickName)
 
-            View.popupClose(this.chat.popups, this.chat.chat)
             Model.addUser(newInputName, newInputNickName)
+            View.popupClose(this.chat.popups, this.chat.chat)
 
-            this.chat.panelUserName.innerHTML = newInputName
+            this.id = newInputNickName
+            this.nickName = newInputName
+            View.userAuthUpdateUI(newInputNickName)
+            Controller.renderMessages()
         }
     },
     checkAuth() {
@@ -161,7 +173,7 @@ window.Controller = {
             let overlay = e.target.className.match('overlay')
 
             if (e.target.dataset.action === 'true' || action || overlay) {
-                if (className.match('js-close')) {
+                if (className.match('js-close') && Controller.checkAuth()) {
                     View.popupClose(this.chat.popups, this.chat.chat)
                 }
                 if (className.match('js-menu-btn')) {
@@ -187,8 +199,8 @@ window.Controller = {
             }
         })
 
-        document.addEventListener("keyup", function (e) {
-            if (e.keyCode == 27) {
+        document.addEventListener("keyup", (e) => {
+            if (e.keyCode == 27 && Controller.checkAuth()) {
                 View.closeAll(Controller.chat.chat, Controller.chat.menuBtn, Controller.chat.menu, Controller.chat.popups)
             }
 
@@ -205,6 +217,11 @@ window.Controller = {
                 Controller.sendMessage()
             }
         });
+        //
+        // window.addEventListener('storage', (e) => {
+        //     console.log(e)
+        //     console.log(123123)
+        // })
     },
     checkedIncoming() {
         Model.listenerNewMessages()

@@ -14,10 +14,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   svg {
     width: 2rem;
     height: 2rem;
-    margin-left: 1rem;
+    //margin-left: 1rem;
   }
 
 
@@ -95,13 +96,43 @@
   &._mt-20 {
     margin-top: 2rem;
   }
+
   &._mt-15 {
     margin-top: 1.5rem;
+  }
+
+  &._bg-white {
+    //background: white;
+    //color: var(--cool-blue);
+svg {
+  //background: rgba(white, .4);
+  border-radius: 100%;
+  box-shadow: inset white 0 0 3px 10px, white 0 0 1px 2px;
+}
+    //&:hover {
+    //  color: white;
+    // background: var(--cool-blue);;
+    //  svg {
+    //    transition: all .3s ease;
+    //
+    //    path {
+    //      fill: var(--cool-blue);
+    //    }
+    //  }
+    //}
+    //svg {
+    //  transition: all .3s ease;
+    //
+    //  path {
+    //    fill: var(--cool-blue);
+    //  }
+    //}
   }
 
   &._wide-auto {
     max-width: none;
   }
+
   //display: flex;
   //margin-left: auto;
 }
