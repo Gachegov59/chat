@@ -22,29 +22,44 @@ window.Controller = {
     avatar: localStorage.getItem('ava'),
     // id: '', //todo полумать как сделать реактивным
     id: localStorage.getItem('uid') || localStorage.getItem('nickName'),
+    async renderUsers() {
+        if (Controller.checkAuth()) {
+            const users = await Model.getUsers()
+            // console.log(users)
+            const usersList = document.querySelector('#users');
+            let active = 0
 
-    async renderMessages() {
-       if(Controller.checkAuth()) {
-           // console.log('renderMessages')
-           // console.log(this.id)
-           const messages = await Model.getMessages()
-           const results = document.querySelector('#results');
-
-           this.chat.messagesArr = {list: []}
-           for (let item in messages) {
-               this.chat.messagesArr.list.push({
-                   key: item,
-                   name: messages[item].name,
-                   id: messages[item].id === this.id,
-                   ava: messages[item].ava,
-                   messages: messages[item].messages
-               })
-           }
-           // console.log(this.chat.messagesArr.list)
-           results.innerHTML = View.render('#messages', Controller.chat.messagesArr);
-           View.autoscroll()
-       }
+            for (let user in users) {
+                if (users[user].active === true) {
+                    active++;
+                }
+            }
+            console.log('active', active)
+            View.usersQuantity(active)
+            usersList.innerHTML = View.render('#users', Controller.chat.messagesArr);
+        }
     },
+    async renderMessages() {
+        if (Controller.checkAuth()) {
+            const messages = await Model.getMessages()
+            const results = document.querySelector('#results');
+
+            this.chat.messagesArr = {list: []}
+            for (let item in messages) {
+                this.chat.messagesArr.list.push({
+                    key: item,
+                    name: messages[item].name,
+                    id: messages[item].id === this.id,
+                    ava: messages[item].ava,
+                    messages: messages[item].messages
+                })
+            }
+            // console.log(this.chat.messagesArr.list)
+            results.innerHTML = View.render('#messages', Controller.chat.messagesArr);
+            View.autoscroll()
+        }
+    },
+
     sendMessage() {
         // console.log('sendMessage')
         this.id = localStorage.getItem('uid') || localStorage.getItem('nickName')
@@ -104,9 +119,14 @@ window.Controller = {
         localStorage.setItem('ava', auth.user.photoURL)
 
         this.id = uid
+        this.avatar = auth.user.photoURL
         View.userAuthUpdateUI(name)
-        Controller.renderMessages()
+        Controller.renderUsers()
+        // Controller.renderMessages()
+
         if (name) {
+            View.userAuthUpdateUI(name, auth.user.photoURL)
+            Model.addUserInFB(name, uid)
             View.popupClose(this.chat.popups, this.chat.chat)
         }
     },
@@ -148,6 +168,7 @@ window.Controller = {
             this.nickName = newInputName
             View.userAuthUpdateUI(newInputNickName)
             Controller.renderMessages()
+            Controller.renderMessages()
         }
     },
     checkAuth() {
@@ -155,13 +176,9 @@ window.Controller = {
             View.auth(this.chat.chat)
         }
         if (this.avatar) {
-            // console.log( this.chat.ava)
-            // console.log( this.avatar)
-            this.chat.ava.style.background = `url(${this.avatar})`
-            this.chat.ava.style.backgroundSize = `cover`
-            this.chat.ava.classList.add('_ava')
+            View.userAuthUpdateUI(this.name, this.avatar)
         }
-        this.chat.panelUserName.innerHTML = Controller.name
+        // this.chat.panelUserName.innerHTML = Controller.name
         return localStorage.getItem('name')
     },
 

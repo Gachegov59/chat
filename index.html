@@ -93,9 +93,32 @@
           <button class="btn _menu js-menu-btn" data-action="true"><span></span><span></span><span></span></button>
           <input class="chat__search" placeholder="Найти...">
         </div>
+        <div class="chat__users" id="users">
+          <script id="usersTemplate" type="text/x-handlebars-template">
+            <div>
+              {{#each list}}
+                  {{#if id}}
+                      <div class="message _active">
+                      {{else}}
+                      <div class="message">
+                  {{/if}}
+              
+                      {{#if ava }}
+                          <img src={{ava}} class="message__ava" />
+                          {{else}}
+                          <span class="message__ava-name" title="{{name}}">{{name.[0]}}</span>
+                      {{/if}}
+              
+                      <div class="message__block">
+                      <div class="message__name">{{name}}</div>
+                  </div>
+              {{/each}}
+            </div>
+          </script>
+        </div>
       </aside>
       <div class="chat__content">
-        <div class="chat__name">чат<span class="js-users-quantity">2 участника</span></div>
+        <div class="chat__name">чат<span class="js-users-quantity">Участников:</span></div>
         <div class="chat__history scroll">
           <div id="results"></div>
           <script id="messagesTemplate" type="text/x-handlebars-template">
@@ -103,18 +126,20 @@
               {{#each list}}
                   {{#if id}}
                       <div class="message _my">
-                  {{else}}
+                      {{else}}
                       <div class="message">
                   {{/if}}
               
                       {{#if ava }}
                           <img src={{ava}} class="message__ava" />
-                      {{else}}
+                          {{else}}
                           <span class="message__ava-name" title="{{name}}">{{name.[0]}}</span>
                       {{/if}}
+              
                       <div class="message__block">
+                      <div class="message__name">{{name}}</div>
                               {{#each messages}}
-                                  <div class="message__text"> {{{this.[0]}}} <span>{{this.[1]}} </span></div>
+                                  <div class="message__text"> <div>{{{this.[0]}}} </div> <span>{{this.[1]}} </span></div>
                               {{/each}}
                       </div>
                   </div>

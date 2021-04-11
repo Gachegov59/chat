@@ -5,7 +5,7 @@ window.View = {
     usersQuantityDiv: document.querySelector('.js-users-quantity'),
     render(templateName, model) {
         templateName = templateName + 'Template';
-
+        // console.log(templateName)
         const templateElement = document.querySelector(templateName).textContent
         const renderFn = Handlebars.compile(templateElement);
 
@@ -25,8 +25,15 @@ window.View = {
         menu.classList.remove('_open')
         this.popupClose(popups, chat)
     },
-    userAuthUpdateUI(name) {
+    usersShowAva(){
+
+    },
+    userAuthUpdateUI(name, avatar) {
         Controller.chat.panelUserName.innerHTML = name
+
+        Controller.chat.ava.style.background = `url(${avatar})`
+        Controller.chat.ava.style.backgroundSize = `cover`
+        Controller.chat.ava.classList.add('_ava')
     },
     popupClose(popups, chat) {
         chat.classList.remove('overlay')
@@ -39,8 +46,8 @@ window.View = {
     formValid() {
 
     },
-    addUser() {
-        Controller.usersQuantity++ // todo: добовление через отдельный на бд ?
+    usersQuantity(active) {
+        this.usersQuantityDiv.innerHTML = 'Участников: ' + active
     }
 }
 

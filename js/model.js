@@ -1,7 +1,6 @@
 // ПОЛУЧЕНИЕ ДАННЫХ
 // import {getDataFB} from "./firebase.js";
 // import firebase from "./libs/firebase.js";
-
 var firebaseConfig = {
     apiKey: "AIzaSyBKtblQjVE44WBQpkVNcgSPOeUmX-d2TCc",
     authDomain: "chat-60286.firebaseapp.com",
@@ -18,10 +17,25 @@ window.Model = {
         return new Promise(function (resolve, reject) { //todo: firebase.js удалить
             const bd = firebase.database();
             const chat = bd.ref('chat');
-            // chat.on('value', (snapshot) => { todo: проверить
             chat.once('value', (snapshot) => {
                 if (snapshot) {
                     resolve(snapshot.val())
+                    // console.log('getMessages',snapshot.val())
+                } else {
+                    reject(new Error(snapshot))
+                }
+            });
+        })
+    },
+    async getUsers() {
+        return new Promise(function (resolve, reject) { //todo: firebase.js удалить
+            const bd = firebase.database();
+            const chat = bd.ref('users');
+            chat.once('value', (snapshot) => {
+
+                if (snapshot) {
+                    resolve(snapshot.val())
+                    // console.log('getUsers',snapshot.val())
                 } else {
                     reject(new Error(snapshot))
                 }
@@ -39,9 +53,14 @@ window.Model = {
         Controller.renderMessages()
     },
 
-    // addUserInFB(message) {
-    //     firebase.database().ref('users').push().set(message);
-    // },
+    addUserInFB(name, id) {
+        // console.log('addUserInFB')
+        firebase.database().ref('users').push().set({
+            name: name,
+            active: true,
+            id: id
+        });
+    },
     listenerNewMessages() {
         firebase.database().ref('chat').on('child_added', function (snapshot) {
             Controller.renderMessages()
