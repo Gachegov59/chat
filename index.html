@@ -96,15 +96,15 @@
         <div class="chat__users" id="users">
           <script id="usersTemplate" type="text/x-handlebars-template">
             <div>
-              {{#each list}}
+              {{#each listUsers}}
                   {{#if id}}
                       <div class="message _active">
                       {{else}}
                       <div class="message">
                   {{/if}}
               
-                      {{#if ava }}
-                          <img src={{ava}} class="message__ava" />
+                      {{#if avatar }}
+                          <img src={{avatar}} class="message__ava" />
                           {{else}}
                           <span class="message__ava-name" title="{{name}}">{{name.[0]}}</span>
                       {{/if}}

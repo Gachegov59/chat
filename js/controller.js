@@ -14,7 +14,8 @@ window.Controller = {
 
         text: document.querySelector('.js-text'),
         usersQuantity: 0,
-        messagesArr: []
+        messagesArr: [],
+        usersArr: []
     },
     name: localStorage.getItem('name'),
     nickName: localStorage.getItem('nickName'),  //todo  проверять уникальность т.к используетсяь в id
@@ -28,18 +29,27 @@ window.Controller = {
             // console.log(users)
             const usersList = document.querySelector('#users');
             let active = 0
-
+            this.chat.usersArr = {listUsers: []}
+            console.log('users', users)
+            for (let item in users) {
+                this.chat.usersArr.listUsers.push({
+                    name: users[item].name,
+                    id: users[item].id === this.id,
+                    avatar: users[item].avatar,
+                })
+            }
             for (let user in users) {
                 if (users[user].active === true) {
                     active++;
                 }
             }
-            console.log('active', active)
+
             View.usersQuantity(active)
-            usersList.innerHTML = View.render('#users', Controller.chat.messagesArr);
+            usersList.innerHTML = View.render('#users', Controller.chat.usersArr);
         }
     },
     async renderMessages() {
+        console.log(this.chat.messagesArr)
         if (Controller.checkAuth()) {
             const messages = await Model.getMessages()
             const results = document.querySelector('#results');
@@ -68,13 +78,14 @@ window.Controller = {
         let emptyMessage = false
 
         let text = this.chat.text.value
-            .replace(/<(?!br\s*\/?)[^>]+>/g, '')
+            // .replace(/<(?!br\s*\/?)[^>]+>/g, '')
+            .replace(/<\/?[^>]+(>|$)/g, "")
             .replace(/\n/g, ' <br/>')
             .split(" ")
             .filter(function (value, index, arr) {
                 return value === '<br/>' ? value !== arr[index + 1] : value
             }).join(" ")  // УБИРАЕМ ПОВТОРЕНИЕ <br/> ПОДРЯД
-        if (text.split(' ')[0] === "<br/>") {     //ОСТАВЛЯЕМ ТОЛЬКО ПРЕОБРАЗОВАНИЕ ПЕРЕНОСА В <BR>
+        if (text.split(' ')[0] === "<br/>" || text.split(' ')[0] === '<br>') {     //ОСТАВЛЯЕМ ТОЛЬКО ПРЕОБРАЗОВАНИЕ ПЕРЕНОСА В <BR>
             emptyMessage = true
         }
 
@@ -113,20 +124,23 @@ window.Controller = {
         const auth = await Model.userEnterGoogle()
         const name = auth.user.displayName
         const uid = auth.user.uid
-        localStorage.setItem('name', name)
-        localStorage.setItem('nickName', null)
-        localStorage.setItem('uid', auth.user.uid)
-        localStorage.setItem('ava', auth.user.photoURL)
+        const avatar = auth.user.photoURL
 
         this.id = uid
-        this.avatar = auth.user.photoURL
+        this.avatar = avatar
+
+        localStorage.setItem('name', name)
+        localStorage.setItem('nickName', null)
+        localStorage.setItem('uid', uid)
+        localStorage.setItem('ava', avatar)
+
         View.userAuthUpdateUI(name)
         Controller.renderUsers()
-        // Controller.renderMessages()
+        Controller.renderMessages()
 
         if (name) {
-            View.userAuthUpdateUI(name, auth.user.photoURL)
-            Model.addUserInFB(name, uid)
+            View.userAuthUpdateUI(name, avatar)
+            Model.addUserInFB(name, uid, avatar)
             View.popupClose(this.chat.popups, this.chat.chat)
         }
     },

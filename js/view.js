@@ -7,6 +7,7 @@ window.View = {
         templateName = templateName + 'Template';
         // console.log(templateName)
         const templateElement = document.querySelector(templateName).textContent
+        // console.log(templateElement) //todo: хешировать? долго грузит
         const renderFn = Handlebars.compile(templateElement);
 
         return renderFn(model);

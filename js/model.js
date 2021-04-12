@@ -53,12 +53,13 @@ window.Model = {
         Controller.renderMessages()
     },
 
-    addUserInFB(name, id) {
+    addUserInFB(name, id, avatar) {
         // console.log('addUserInFB')
         firebase.database().ref('users').push().set({
             name: name,
             active: true,
-            id: id
+            id: id,
+            avatar: avatar,
         });
     },
     listenerNewMessages() {
