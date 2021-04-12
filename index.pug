@@ -38,25 +38,31 @@ html(lang='en')
                         span
                         span
                     input.chat__search(placeholder="Найти...")
-                #users.chat__users
+                #users.chat__users.scroll
                     script(id="usersTemplate" type="text/x-handlebars-template")
                         div.
                             {{#each listUsers}}
-                                {{#if id}}
-                                    <div class="message _active">
-                                    {{else}}
-                                    <div class="message">
+                                {{#if active}}
+                                    <div class="user _active">
+                                {{else}}
+                                    <div class="user">
                                 {{/if}}
 
                                     {{#if avatar }}
-                                        <img src={{avatar}} class="message__ava" />
-                                        {{else}}
-                                        <span class="message__ava-name" title="{{name}}">{{name.[0]}}</span>
+                                        <img src={{avatar}} class="user__ava" />
+                                    {{else}}
+                                        <span class="user__ava-name" title="{{name}}">{{name.[0]}}</span>
                                     {{/if}}
 
-                                    <div class="message__block">
-                                    <div class="message__name">{{name}}</div>
-                                </div>
+                                    <div class="user__block">
+                                        <div class="user__name">{{name}}</div>
+                                        {{#if lastMessage }}
+                                                <div class="user__message">{{lastMessage}}</div>
+                                            {{else}}
+                                                 <div class="user__message"> lastMessage </div>
+                                        {{/if}}
+                                    </div>
+                            </div>
                             {{/each}}
             .chat__content
                 .chat__name чат

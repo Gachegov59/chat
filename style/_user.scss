@@ -1,0 +1,87 @@
+.user {
+  display: flex;
+  margin-bottom: 2rem;
+
+  &._active {
+    position: relative;
+
+    &::after {
+      content: "";
+      border: 1px solid #fff;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 1rem;
+      height: 1rem;
+      border-radius: 100%;
+      background: #4bb34b;
+    }
+  }
+
+  &__block {
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    overflow: hidden;
+    @include phone {
+      display: none;
+    }
+  }
+
+  &__name {
+    font-size: 1.4rem;
+    line-height: 1.4rem;
+
+    text-transform: capitalize;
+
+    ._my & {
+      text-align: right;
+      @include small-desktop {
+        text-align: left;
+      }
+    }
+  }
+
+  &__ava {
+    height: 4rem;
+    width: 4rem;
+    border-radius: 100%;
+    object-fit: contain;
+    @include small-desktop {
+      height: 3rem;
+      width: 3rem;
+    }
+  }
+
+  &__ava-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--cool-blue);
+    text-transform: uppercase;
+    height: 4rem;
+    width: 4rem;
+    border-radius: 100%;
+    position: sticky;
+    top: 0;
+    font-size: 1.5rem;
+    @include small-desktop {
+      height: 3rem;
+      width: 3rem;
+      min-width: 3rem;
+    }
+  }
+
+  &__message {
+    margin-top: .5rem;
+    font-size: 1.4rem;
+    color: var(--blue-grey);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+  }
+}

@@ -5,11 +5,11 @@ window.View = {
     usersQuantityDiv: document.querySelector('.js-users-quantity'),
     render(templateName, model) {
         templateName = templateName + 'Template';
-        // console.log(templateName)
+        console.log(templateName)
         const templateElement = document.querySelector(templateName).textContent
         // console.log(templateElement) //todo: хешировать? долго грузит
         const renderFn = Handlebars.compile(templateElement);
-
+        // console.log('render')
         return renderFn(model);
 
     },
@@ -31,10 +31,12 @@ window.View = {
     },
     userAuthUpdateUI(name, avatar) {
         Controller.chat.panelUserName.innerHTML = name
+        if(Controller.chat.avatar) {
+            Controller.chat.ava.style.background = `url(${avatar})`
+            Controller.chat.ava.style.backgroundSize = `cover`
+            Controller.chat.ava.classList.add('_ava')
+        }
 
-        Controller.chat.ava.style.background = `url(${avatar})`
-        Controller.chat.ava.style.backgroundSize = `cover`
-        Controller.chat.ava.classList.add('_ava')
     },
     popupClose(popups, chat) {
         chat.classList.remove('overlay')

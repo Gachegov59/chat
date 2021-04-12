@@ -53,15 +53,7 @@ window.Model = {
         Controller.renderMessages()
     },
 
-    addUserInFB(name, id, avatar) {
-        // console.log('addUserInFB')
-        firebase.database().ref('users').push().set({
-            name: name,
-            active: true,
-            id: id,
-            avatar: avatar,
-        });
-    },
+
     listenerNewMessages() {
         firebase.database().ref('chat').on('child_added', function (snapshot) {
             Controller.renderMessages()
@@ -70,14 +62,28 @@ window.Model = {
             Controller.renderMessages()
         })
     },
-    addUser(newInputName, newInputNickName) {
-        firebase.database().ref('users').push().set({
-            name: newInputName, nickName: newInputNickName
-        });
-        View.addUser()
-        // return
+    listenerNewUsers() {
+        firebase.database().ref('users').on('child_added', function (snapshot) {
+            Controller.renderUsers()
+        })
+        firebase.database().ref('users').on('child_changed', function (snapshot) {
+            Controller.renderUsers()
+        })
     },
-
+    // addUser(newInputName, newInputNickName) {
+    //     firebase.database().ref('users').push().set({
+    //         name: newInputName, nickName: newInputNickName
+    //     });
+    //     // return
+    // },
+    addUserInFB(name, id, avatar) {
+        firebase.database().ref('users').push().set({
+            name: name,
+            active: true,
+            id: id,
+            avatar: avatar,
+        });
+    },
     async userEnterGoogle() {
         // const firestore = firebase.firestore();
 

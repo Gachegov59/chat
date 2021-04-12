@@ -21,23 +21,26 @@ window.Controller = {
     nickName: localStorage.getItem('nickName'),  //todo  проверять уникальность т.к используетсяь в id
     uid: localStorage.getItem('uid'),
     avatar: localStorage.getItem('ava'),
+    auth: !!(localStorage.getItem('uid') || localStorage.getItem('nickName')),
     // id: '', //todo полумать как сделать реактивным
     id: localStorage.getItem('uid') || localStorage.getItem('nickName'),
     async renderUsers() {
-        if (Controller.checkAuth()) {
+        if (this.auth) {
             const users = await Model.getUsers()
             // console.log(users)
             const usersList = document.querySelector('#users');
             let active = 0
             this.chat.usersArr = {listUsers: []}
-            console.log('users', users)
+            // console.log('users', users)
             for (let item in users) {
                 this.chat.usersArr.listUsers.push({
                     name: users[item].name,
+                    active: users[item].active,
                     id: users[item].id === this.id,
                     avatar: users[item].avatar,
                 })
             }
+            // console.log('usersArr', this.chat.usersArr  )
             for (let user in users) {
                 if (users[user].active === true) {
                     active++;
@@ -49,22 +52,23 @@ window.Controller = {
         }
     },
     async renderMessages() {
-        console.log(this.chat.messagesArr)
-        if (Controller.checkAuth()) {
+        if (this.auth) {
             const messages = await Model.getMessages()
             const results = document.querySelector('#results');
 
-            this.chat.messagesArr = {list: []}
+            this.chat.messagesArr = {list: []} //todo: обнуление костыл?
             for (let item in messages) {
                 this.chat.messagesArr.list.push({
                     key: item,
                     name: messages[item].name,
                     id: messages[item].id === this.id,
-                    ava: messages[item].ava,
+                    ava: messages[item].ava === null ? false: messages[item].ava,
                     messages: messages[item].messages
-                })
+                });
             }
+
             // console.log(this.chat.messagesArr.list)
+            // console.log(messages)
             results.innerHTML = View.render('#messages', Controller.chat.messagesArr);
             View.autoscroll()
         }
@@ -101,7 +105,7 @@ window.Controller = {
                 messages: [[text, time]]
             }
             // console.log(message)
-            if (!Controller.checkAuth()) {
+            if (!this.auth) {
                 Controller.checkAuth()
             } else {
                 // ЕСЛИ СООБЩЕНИЕ USER'S ПОВТОРЯЕТЬСЯ -> ОБЪЕДЕНЯЕТ В ГРУППУ
@@ -128,6 +132,7 @@ window.Controller = {
 
         this.id = uid
         this.avatar = avatar
+        this.auth = true
 
         localStorage.setItem('name', name)
         localStorage.setItem('nickName', null)
@@ -147,8 +152,9 @@ window.Controller = {
     userEnter(e, click) {
         let validName = false
         let validNickName = false
-        let newInputName = this.chat.inputName.value
-        let newInputNickName = this.chat.inputNickName.value
+
+        let name = this.chat.inputName.value
+        let nickName = this.chat.inputNickName.value
 
         if (e.target.className.match('js-user-name') || click) {      //todo: рефакторинг
             if (this.chat.inputName.value.length > 1) {
@@ -172,27 +178,28 @@ window.Controller = {
         }
 
         if (validName && validNickName) {
-            localStorage.setItem('name', newInputName)
-            localStorage.setItem('nickName', newInputNickName)
+            localStorage.setItem('name', name)
+            localStorage.setItem('nickName', nickName)
+            localStorage.setItem('id', nickName)
+            localStorage.setItem('ava', null)
+            console.log('nickName',nickName)
 
-            Model.addUser(newInputName, newInputNickName)
             View.popupClose(this.chat.popups, this.chat.chat)
+            Model.addUserInFB(name, nickName, false)
+            View.userAuthUpdateUI(name, false)
 
-            this.id = newInputNickName
-            this.nickName = newInputName
-            View.userAuthUpdateUI(newInputNickName)
+            this.id = name
+            this.nickName = nickName
+            this.auth = true
             Controller.renderMessages()
-            Controller.renderMessages()
+
         }
     },
     checkAuth() {
         if (!(localStorage.getItem('nickName') || localStorage.getItem('uid'))) {
             View.auth(this.chat.chat)
         }
-        if (this.avatar) {
-            View.userAuthUpdateUI(this.name, this.avatar)
-        }
-        // this.chat.panelUserName.innerHTML = Controller.name
+        View.userAuthUpdateUI(Controller.name, this.avatar)
         return localStorage.getItem('name')
     },
 
@@ -204,7 +211,7 @@ window.Controller = {
             let overlay = e.target.className.match('overlay')
 
             if (e.target.dataset.action === 'true' || action || overlay) {
-                if (className.match('js-close') && Controller.checkAuth()) {
+                if (className.match('js-close') && this.auth) {
                     View.popupClose(this.chat.popups, this.chat.chat)
                 }
                 if (className.match('js-menu-btn')) {
@@ -229,9 +236,8 @@ window.Controller = {
 
             }
         })
-
         document.addEventListener("keyup", (e) => {
-            if (e.keyCode == 27 && Controller.checkAuth()) {
+            if (e.keyCode == 27 && this.auth) {
                 View.closeAll(Controller.chat.chat, Controller.chat.menuBtn, Controller.chat.menu, Controller.chat.popups)
             }
 
@@ -248,14 +254,11 @@ window.Controller = {
                 Controller.sendMessage()
             }
         });
-        //
-        // window.addEventListener('storage', (e) => {
-        //     console.log(e)
-        //     console.log(123123)
-        // })
+
     },
     checkedIncoming() {
         Model.listenerNewMessages()
+        // Model.listenerNewUsers()
     },
 }
 

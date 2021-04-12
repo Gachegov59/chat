@@ -324,7 +324,9 @@ input, textarea {
   flex-direction: column;
 }
 .chat__users {
-  padding-top: 3rem;
+  padding: 2rem 0;
+  margin-top: 2rem;
+  max-height: 100%;
 }
 .chat__users .message {
   padding: 0;
@@ -543,12 +545,98 @@ input, textarea {
   padding: 0.5rem;
 }
 ._my .message__name {
-  text-align: right;
+  text-align: left;
 }
 @media only screen and (max-width: 1279px) {
   ._my .message__name {
+    text-align: right;
+  }
+}
+
+.user {
+  display: flex;
+  margin-bottom: 2rem;
+}
+.user._active {
+  position: relative;
+}
+.user._active::after {
+  content: "";
+  border: 1px solid #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 100%;
+  background: #4bb34b;
+}
+.user__block {
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  overflow: hidden;
+}
+@media only screen and (max-width: 767px) {
+  .user__block {
+    display: none;
+  }
+}
+.user__name {
+  font-size: 1.4rem;
+  line-height: 1.4rem;
+  text-transform: capitalize;
+}
+._my .user__name {
+  text-align: right;
+}
+@media only screen and (max-width: 1279px) {
+  ._my .user__name {
     text-align: left;
   }
+}
+.user__ava {
+  height: 4rem;
+  width: 4rem;
+  border-radius: 100%;
+  object-fit: contain;
+}
+@media only screen and (max-width: 1279px) {
+  .user__ava {
+    height: 3rem;
+    width: 3rem;
+  }
+}
+.user__ava-name {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--cool-blue);
+  text-transform: uppercase;
+  height: 4rem;
+  width: 4rem;
+  border-radius: 100%;
+  position: sticky;
+  top: 0;
+  font-size: 1.5rem;
+}
+@media only screen and (max-width: 1279px) {
+  .user__ava-name {
+    height: 3rem;
+    width: 3rem;
+    min-width: 3rem;
+  }
+}
+.user__message {
+  margin-top: 0.5rem;
+  font-size: 1.4rem;
+  color: var(--blue-grey);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .menu {
