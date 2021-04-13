@@ -17,6 +17,7 @@ html(lang='en')
         script(src='https://www.gstatic.com/firebasejs/8.3.0/firebase-auth.js' type='text/javascript')
         script(src='https://www.gstatic.com/firebasejs/8.3.0/firebase-database.js' type='text/javascript')
         script(src='https://www.gstatic.com/firebasejs/8.3.0/firebase-firestore.js' type='text/javascript')
+        script(src='https://vk.com/js/api/openapi.js' type='text/javascript')
         script(src='js/index.js' type='module')
         script(src='js/view.js' type='module')
         script(src='js/controller.js' type='module')
@@ -50,7 +51,7 @@ html(lang='en')
 
                                     {{#if avatar }}
                                         <img src={{avatar}} class="user__ava" />
-                                    {{else}}
+                                         {{else}}
                                         <span class="user__ava-name" title="{{name}}">{{name.[0]}}</span>
                                     {{/if}}
 

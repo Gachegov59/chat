@@ -5,7 +5,8 @@ window.View = {
     usersQuantityDiv: document.querySelector('.js-users-quantity'),
     render(templateName, model) {
         templateName = templateName + 'Template';
-        console.log(templateName)
+        // console.log(templateName)
+
         const templateElement = document.querySelector(templateName).textContent
         // console.log(templateElement) //todo: хешировать? долго грузит
         const renderFn = Handlebars.compile(templateElement);
@@ -31,7 +32,7 @@ window.View = {
     },
     userAuthUpdateUI(name, avatar) {
         Controller.chat.panelUserName.innerHTML = name
-        if(Controller.chat.avatar) {
+        if(Controller.avatar) {
             Controller.chat.ava.style.background = `url(${avatar})`
             Controller.chat.ava.style.backgroundSize = `cover`
             Controller.chat.ava.classList.add('_ava')
@@ -51,6 +52,10 @@ window.View = {
     },
     usersQuantity(active) {
         this.usersQuantityDiv.innerHTML = 'Участников: ' + active
+    },
+    soundMessage(){
+        new Audio('https://zvukogram.com/mp3/cats/1385/zvuk-feysbuk-soobschenie.mp3').play()
     }
+
 }
 

@@ -11,44 +11,50 @@ window.Controller = {
         inputNickName: document.querySelector('.js-user-nickName'),
         panelUserName: document.querySelector('.js-panel-userName'),
         btnEnterGoogle: document.querySelector('.js-enter-google'),
-
         text: document.querySelector('.js-text'),
         usersQuantity: 0,
         messagesArr: [],
-        usersArr: []
+        usersArr: JSON.parse(localStorage.getItem('usersArr')),
+        usersInFB: JSON.parse(localStorage.getItem('usersInFB'))
     },
+
     name: localStorage.getItem('name'),
-    nickName: localStorage.getItem('nickName'),  //todo  проверять уникальность т.к используетсяь в id
+    nickName: localStorage.getItem('nickName'),
     uid: localStorage.getItem('uid'),
+    userKey: localStorage.getItem('userKey'),
     avatar: localStorage.getItem('ava'),
     auth: !!(localStorage.getItem('uid') || localStorage.getItem('nickName')),
-    // id: '', //todo полумать как сделать реактивным
     id: localStorage.getItem('uid') || localStorage.getItem('nickName'),
+
     async renderUsers() {
         if (this.auth) {
             const users = await Model.getUsers()
-            // console.log(users)
+            localStorage.setItem('usersInFB', JSON.stringify(users))
+
             const usersList = document.querySelector('#users');
             let active = 0
-            this.chat.usersArr = {listUsers: []}
+
+            let usersArr = {listUsers: []}
             // console.log('users', users)
             for (let item in users) {
-                this.chat.usersArr.listUsers.push({
+                usersArr.listUsers.push({
+                    key: users[item].id === this.id ? item : false, //todo: костыль
                     name: users[item].name,
                     active: users[item].active,
                     id: users[item].id === this.id,
-                    avatar: users[item].avatar,
+                    avatar: users[item].avatar === '' ? false : users[item].avatar,
                 })
-            }
-            // console.log('usersArr', this.chat.usersArr  )
-            for (let user in users) {
-                if (users[user].active === true) {
+                let userKey = users[item].id === this.id ? item : false; //todo: костыль
+                // console.log('userKey', userKey)
+                if (users[item].active === true) {
                     active++;
                 }
             }
-
+            this.chat.usersArr = usersArr
+            localStorage.setItem('usersArr', JSON.stringify(usersArr))
+            // console.log('usersArr', this.chat.usersArr)
             View.usersQuantity(active)
-            usersList.innerHTML = View.render('#users', Controller.chat.usersArr);
+            usersList.innerHTML = View.render('#users', usersArr);
         }
     },
     async renderMessages() {
@@ -62,18 +68,141 @@ window.Controller = {
                     key: item,
                     name: messages[item].name,
                     id: messages[item].id === this.id,
-                    ava: messages[item].ava === null ? false: messages[item].ava,
+                    ava: messages[item].ava === null ? false : messages[item].ava,
                     messages: messages[item].messages
                 });
             }
-
-            // console.log(this.chat.messagesArr.list)
+            // console.log('this.chat.messagesArr.list', this.chat.messagesArr.list)
             // console.log(messages)
             results.innerHTML = View.render('#messages', Controller.chat.messagesArr);
             View.autoscroll()
         }
     },
+    async status() {
+        if (this.auth) {
+            let status = await Model.statusConnect()
+            // console.log('status', status)
+            if (status) {
+                // console.log(this.userKey)
+                Model.setStatus(this.name, this.uid, this.avatar, this.userKey)
+            }
+        }
+    },
+    async userAuth(to) {
+        let name, id, avatar
+        if (to === 'google') {
+            const auth = await Model.userEnterGoogle()
 
+            name = auth.user.displayName
+            id = auth.user.uid
+            avatar = auth.user.photoURL
+        }
+        if (to === 'vk') {
+            const auth = await Model.userEnterVK()
+            const api = await Model.vkAPI('users.get', {fields: 'photo_200'})
+            const user = auth.session.user
+            name = user.first_name
+            id = user.id
+            avatar = api[0].photo_200
+        }
+
+        this.id = id
+        this.avatar = avatar
+        this.auth = true
+
+        localStorage.setItem('name', name)
+        localStorage.setItem('nickName', null)
+        localStorage.setItem('uid', id)
+        localStorage.setItem('ava', avatar)
+
+        View.userAuthUpdateUI(name)
+        Controller.renderUsers()
+        Controller.renderMessages()
+
+        if (name) {
+            View.userAuthUpdateUI(name, avatar)
+
+            let haveInFb = false
+
+            for (let user in this.chat.usersInFB) {
+                if (this.chat.usersInFB[user].uid === this.id) {
+                    haveInFb = true
+                }
+            }
+
+            if(!haveInFb){
+                Model.addUserInFB(name, id, avatar)
+            }
+
+            View.popupClose(this.chat.popups, this.chat.chat)
+        }
+    },
+    checkAuth() {
+
+        for (let user in this.chat.usersInFB) {
+            console.log(this.chat.usersInFB[user])
+            console.log(this.chat.usersInFB[user].uid === this.id)
+            // if(this.chat.usersInFB[user]id === this.id)
+        }
+
+        if (!(localStorage.getItem('nickName') || localStorage.getItem('uid'))) {
+            View.auth(this.chat.chat)
+        }
+        View.userAuthUpdateUI(Controller.name, this.avatar)
+        return localStorage.getItem('name')
+    },
+    userEnter(e, click) {
+        let validName = false
+        let validNickName = false
+
+        let name = this.chat.inputName.value
+        let nickName = this.chat.inputNickName.value
+
+        if (e.target.className.match('js-user-name') || click) {      //todo: рефакторинг
+            if (this.chat.inputName.value.length > 1) {
+                validName = true
+                this.chat.inputName.parentNode.classList.add('_isValid')
+                this.chat.inputName.parentNode.classList.remove('_isNoValid')
+            } else {
+                this.chat.inputName.parentNode.classList.add('_isNoValid')
+                this.chat.inputName.parentNode.classList.remove('_isValid')
+            }
+        }
+
+        if (e.target.className.match('js-user-nickName') || click) {
+            if (this.chat.inputNickName.value.length > 1) {
+                validNickName = true
+                this.chat.inputNickName.parentNode.classList.add('_isValid')
+                this.chat.inputNickName.parentNode.classList.remove('_isNoValid')
+            } else {
+                this.chat.inputNickName.parentNode.classList.add('_isNoValid')
+                this.chat.inputNickName.parentNode.classList.remove('_isValid')
+            }
+        }
+
+        if (validName && validNickName) {
+            //     console.log(validName && validNickName)
+            // }
+            // if (false) {
+            localStorage.setItem('name', name)
+            localStorage.setItem('nickName', nickName)
+            localStorage.setItem('id', nickName)
+            localStorage.setItem('ava', '')
+            console.log('nickName', nickName)
+
+            View.popupClose(this.chat.popups, this.chat.chat)
+            Model.addUserInFB(name, nickName, false)
+            View.userAuthUpdateUI(name, '')
+
+            this.id = name
+            this.nickName = nickName
+            this.avatar = false
+            this.auth = true
+            Controller.renderUsers()
+            Controller.renderMessages()
+
+        }
+    },
     sendMessage() {
         // console.log('sendMessage')
         this.id = localStorage.getItem('uid') || localStorage.getItem('nickName')
@@ -86,9 +215,10 @@ window.Controller = {
             .replace(/<\/?[^>]+(>|$)/g, "")
             .replace(/\n/g, ' <br/>')
             .split(" ")
+            // УБИРАЕМ ПОВТОРЕНИЕ <br/> ПОДРЯД
             .filter(function (value, index, arr) {
                 return value === '<br/>' ? value !== arr[index + 1] : value
-            }).join(" ")  // УБИРАЕМ ПОВТОРЕНИЕ <br/> ПОДРЯД
+            }).join(" ")
         if (text.split(' ')[0] === "<br/>" || text.split(' ')[0] === '<br>') {     //ОСТАВЛЯЕМ ТОЛЬКО ПРЕОБРАЗОВАНИЕ ПЕРЕНОСА В <BR>
             emptyMessage = true
         }
@@ -104,6 +234,7 @@ window.Controller = {
                 ava: this.avatar,
                 messages: [[text, time]]
             }
+
             // console.log(message)
             if (!this.auth) {
                 Controller.checkAuth()
@@ -124,85 +255,6 @@ window.Controller = {
         document.querySelector('.js-text').value = '';
     },
 
-    async userAuth() {
-        const auth = await Model.userEnterGoogle()
-        const name = auth.user.displayName
-        const uid = auth.user.uid
-        const avatar = auth.user.photoURL
-
-        this.id = uid
-        this.avatar = avatar
-        this.auth = true
-
-        localStorage.setItem('name', name)
-        localStorage.setItem('nickName', null)
-        localStorage.setItem('uid', uid)
-        localStorage.setItem('ava', avatar)
-
-        View.userAuthUpdateUI(name)
-        Controller.renderUsers()
-        Controller.renderMessages()
-
-        if (name) {
-            View.userAuthUpdateUI(name, avatar)
-            Model.addUserInFB(name, uid, avatar)
-            View.popupClose(this.chat.popups, this.chat.chat)
-        }
-    },
-    userEnter(e, click) {
-        let validName = false
-        let validNickName = false
-
-        let name = this.chat.inputName.value
-        let nickName = this.chat.inputNickName.value
-
-        if (e.target.className.match('js-user-name') || click) {      //todo: рефакторинг
-            if (this.chat.inputName.value.length > 1) {
-                validName = true
-                this.chat.inputName.parentNode.classList.add('_isValid')
-                this.chat.inputName.parentNode.classList.remove('_isNoValid')
-            } else {
-                this.chat.inputName.parentNode.classList.add('_isNoValid')
-                this.chat.inputName.parentNode.classList.remove('_isValid')
-            }
-        }
-        if (e.target.className.match('js-user-nickName') || click) {
-            if (this.chat.inputNickName.value.length > 1) {
-                validNickName = true
-                this.chat.inputNickName.parentNode.classList.add('_isValid')
-                this.chat.inputNickName.parentNode.classList.remove('_isNoValid')
-            } else {
-                this.chat.inputNickName.parentNode.classList.add('_isNoValid')
-                this.chat.inputNickName.parentNode.classList.remove('_isValid')
-            }
-        }
-
-        if (validName && validNickName) {
-            localStorage.setItem('name', name)
-            localStorage.setItem('nickName', nickName)
-            localStorage.setItem('id', nickName)
-            localStorage.setItem('ava', null)
-            console.log('nickName',nickName)
-
-            View.popupClose(this.chat.popups, this.chat.chat)
-            Model.addUserInFB(name, nickName, false)
-            View.userAuthUpdateUI(name, false)
-
-            this.id = name
-            this.nickName = nickName
-            this.auth = true
-            Controller.renderMessages()
-
-        }
-    },
-    checkAuth() {
-        if (!(localStorage.getItem('nickName') || localStorage.getItem('uid'))) {
-            View.auth(this.chat.chat)
-        }
-        View.userAuthUpdateUI(Controller.name, this.avatar)
-        return localStorage.getItem('name')
-    },
-
     eventsListener() {
         document.addEventListener('click', (e) => {
             e.preventDefault()
@@ -221,7 +273,10 @@ window.Controller = {
                     Controller.userEnter(e, true)
                 }
                 if (className.match('js-auth-google')) {
-                    Controller.userAuth(e)
+                    Controller.userAuth('google')
+                }
+                if (className.match('js-auth-vk')) {
+                    Controller.userAuth('vk')
                 }
                 if (className.match('js-send')) {
                     // Controller.sendMessage(e, this.chat.localName, this.chat.localNickName, this.chat.text, chat)
@@ -259,6 +314,6 @@ window.Controller = {
     checkedIncoming() {
         Model.listenerNewMessages()
         // Model.listenerNewUsers()
-    },
+    }
 }
 

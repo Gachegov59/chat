@@ -79,7 +79,8 @@ input, textarea {
 }
 
 .scroll {
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .scroll::-webkit-scrollbar {
   width: 2px;
@@ -125,6 +126,7 @@ input, textarea {
 }
 .btn._menu {
   padding: 0;
+  height: 30px;
   background: none;
   z-index: 55;
   display: block;
@@ -309,13 +311,15 @@ input, textarea {
   max-width: 260px;
   width: 100%;
   border-right: 2px solid var(--dark-two);
-  padding: 1rem 2rem 1rem 1.5rem;
   position: relative;
+  padding: 1.2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 @media only screen and (max-width: 767px) {
   .chat__panel {
     max-width: 5rem;
-    padding: 0.8rem 1rem;
   }
 }
 .chat__content {
@@ -369,7 +373,7 @@ input, textarea {
 }
 @media only screen and (max-width: 767px) {
   .chat__search {
-    visibility: hidden;
+    display: none;
   }
 }
 .chat__send {

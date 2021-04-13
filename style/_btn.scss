@@ -38,12 +38,15 @@
 
   &._menu {
     padding: 0;
+    height: 30px;
     background: none;
     z-index: 55;
     display: block;
     //transition: all .3s ease;
     width: 20px;
-
+    @include phone {
+      //margin: 1rem 0;
+    }
     &:hover {
       span {
         background: var(--cool-blue);
