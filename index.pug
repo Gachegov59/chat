@@ -40,31 +40,30 @@ html(lang='en')
                         span
                     input.chat__search(placeholder="Найти...")
                 #users.chat__users.scroll
-                    script(id="usersTemplate" type="text/x-handlebars-template")
-                        div.
-                            {{#each listUsers}}
-                                {{#if active}}
-                                    <div class="user _active">
-                                {{else}}
-                                    <div class="user">
+                script(id="usersTemplate" type="text/x-handlebars-template")
+                    div.
+                        {{#each listUsers}}
+                            {{#if active}}
+                                <div class="user _active">
+                            {{else}}
+                                <div class="user">
+                            {{/if}}
+
+                                {{#if avatar }}
+                                    <img src={{avatar}} class="user__ava" />
+                                     {{else}}
+                                    <span class="user__ava-name" title="{{name}}">{{name.[0]}}</span>
                                 {{/if}}
 
-                                    {{#if avatar }}
-                                        <img src={{avatar}} class="user__ava" />
-                                         {{else}}
-                                        <span class="user__ava-name" title="{{name}}">{{name.[0]}}</span>
+                                <div class="user__block">
+                                    <div class="user__name">{{name}}</div>
+                                    {{#if lastMessage }}
+                                            <div class="user__message">{{lastMessage}}</div>
+                                        {{else}}
                                     {{/if}}
-
-                                    <div class="user__block">
-                                        <div class="user__name">{{name}}</div>
-                                        {{#if lastMessage }}
-                                                <div class="user__message">{{lastMessage}}</div>
-                                            {{else}}
-                                                 <div class="user__message"> lastMessage </div>
-                                        {{/if}}
-                                    </div>
-                            </div>
-                            {{/each}}
+                                </div>
+                        </div>
+                        {{/each}}
             .chat__content
                 .chat__name чат
                     span.js-users-quantity Участников:

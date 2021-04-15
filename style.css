@@ -192,6 +192,7 @@ input, textarea {
   transform: translate(-50%);
   top: -1500px;
   transition: var(--transition);
+  min-width: 300px;
 }
 .popup._open {
   top: 5rem;
@@ -312,10 +313,9 @@ input, textarea {
   width: 100%;
   border-right: 2px solid var(--dark-two);
   position: relative;
-  padding: 1.2rem 0;
+  padding: 1.2rem 0 1rem 1rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 @media only screen and (max-width: 767px) {
   .chat__panel {
@@ -331,6 +331,7 @@ input, textarea {
   padding: 2rem 0;
   margin-top: 2rem;
   max-height: 100%;
+  max-width: 175px;
 }
 .chat__users .message {
   padding: 0;
@@ -693,6 +694,21 @@ input, textarea {
 }
 .menu__urer-name {
   font-size: 1.5rem;
+}
+.menu__urer-exit {
+  margin-top: 1rem;
+  cursor: pointer;
+}
+.menu__urer-exit svg {
+  pointer-events: none;
+  height: 2.5rem;
+}
+.menu__urer-exit svg path {
+  transition: var(--transition);
+  fill: var(--cool-blue);
+}
+.menu__urer-exit:hover svg path {
+  fill: var(--white);
 }
 
 /*# sourceMappingURL=style.css.map */

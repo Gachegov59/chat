@@ -64,4 +64,23 @@
   &__urer-name {
     font-size: 1.5rem;
   }
+  &__urer-exit{
+    margin-top: 1rem;
+    cursor: pointer;
+    svg {
+      pointer-events: none;
+      height: 2.5rem;
+      path {
+        transition: var(--transition);
+        fill: var(--cool-blue);;
+      }
+    }
+    &:hover {
+      svg {
+        path {
+          fill: var(--white);
+        }
+      }
+    }
+  }
 }

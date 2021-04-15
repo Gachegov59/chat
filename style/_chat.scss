@@ -8,12 +8,9 @@
     width: 100%;
     border-right: 2px solid var(--dark-two);
     position: relative;
-
-    padding: 1.2rem 0;
+    padding: 1.2rem 0 1rem 1rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-
 
     @include phone {
       max-width: 5rem;
@@ -34,6 +31,7 @@
     margin-top: 2rem;
     //max-height: calc(100% - 25px);
     max-height: 100%;
+    max-width: 175px;
     .message {
       padding: 0;
       &__name {

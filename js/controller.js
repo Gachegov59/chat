@@ -27,34 +27,40 @@ window.Controller = {
     id: localStorage.getItem('uid') || localStorage.getItem('nickName'),
 
     async renderUsers() {
-        if (this.auth) {
-            const users = await Model.getUsers()
-            localStorage.setItem('usersInFB', JSON.stringify(users))
+        let users = await Model.getUsers()
+        const usersList = document.querySelector('#users');
+        let active = 0
+        let usersArr = {listUsers: []}
 
-            const usersList = document.querySelector('#users');
-            let active = 0
+        this.chat.usersArr = usersArr
+        this.chat.usersInFB = users
 
-            let usersArr = {listUsers: []}
+        for (let item in users) {
+            usersArr.listUsers.push({
+                key: users[item].id === this.id ? item : false, //todo: костыль
+                name: users[item].name,
+                active: users[item].active,
+                id: users[item].id === this.id,
+                avatar: users[item].avatar === '' ? false : users[item].avatar,
+                lastMessage: users[item].lastMessage
+            })
+            // let userKey = users[item].id === this.id ? item : false; //todo: костыль
             // console.log('users', users)
-            for (let item in users) {
-                usersArr.listUsers.push({
-                    key: users[item].id === this.id ? item : false, //todo: костыль
-                    name: users[item].name,
-                    active: users[item].active,
-                    id: users[item].id === this.id,
-                    avatar: users[item].avatar === '' ? false : users[item].avatar,
-                })
-                let userKey = users[item].id === this.id ? item : false; //todo: костыль
-                // console.log('userKey', userKey)
-                if (users[item].active === true) {
-                    active++;
-                }
-            }
-            this.chat.usersArr = usersArr
-            localStorage.setItem('usersArr', JSON.stringify(usersArr))
-            // console.log('usersArr', this.chat.usersArr)
-            View.usersQuantity(active)
+            active++;
+
+        }
+
+        localStorage.setItem('usersInFB', JSON.stringify(users))
+        localStorage.setItem('usersArr', JSON.stringify(usersArr))
+
+        View.usersQuantity(active)
+        if (this.auth) {
             usersList.innerHTML = View.render('#users', usersArr);
+        } else {
+            if (users === null) {
+                // console.log('null')
+                usersList.innerHTML = View.render('#users', usersArr);
+            }
         }
     },
     async renderMessages() {
@@ -80,12 +86,12 @@ window.Controller = {
     },
     async status() {
         if (this.auth) {
-            let status = await Model.statusConnect()
-            // console.log('status', status)
-            if (status) {
-                // console.log(this.userKey)
-                Model.setStatus(this.name, this.uid, this.avatar, this.userKey)
-            }
+            Model.statusConnect(this.name, this.uid, this.avatar, this.userKey)
+        }
+    },
+    async statusDisConnect() {
+        if (this.auth) {
+            Model.statusDisConnect(this.name, this.uid, this.avatar, this.userKey)
         }
     },
     async userAuth(to) {
@@ -115,35 +121,38 @@ window.Controller = {
         localStorage.setItem('uid', id)
         localStorage.setItem('ava', avatar)
 
-        View.userAuthUpdateUI(name)
-        Controller.renderUsers()
-        Controller.renderMessages()
 
         if (name) {
             View.userAuthUpdateUI(name, avatar)
-
-            let haveInFb = false
-
-            for (let user in this.chat.usersInFB) {
-                if (this.chat.usersInFB[user].uid === this.id) {
-                    haveInFb = true
-                }
-            }
-
-            if(!haveInFb){
-                Model.addUserInFB(name, id, avatar)
-            }
-
             View.popupClose(this.chat.popups, this.chat.chat)
         }
-    },
-    checkAuth() {
+        View.userAuthUpdateUI(name, avatar)
+
+        let haveInFb = true
+        let keyFromFb
 
         for (let user in this.chat.usersInFB) {
-            console.log(this.chat.usersInFB[user])
-            console.log(this.chat.usersInFB[user].uid === this.id)
-            // if(this.chat.usersInFB[user]id === this.id)
+            if (this.chat.usersInFB[user].id === this.id) {
+                // console.log(this.chat.usersInFB[user].id === this.id)
+                keyFromFb = user
+                haveInFb = false
+            }
         }
+        // console.log('haveInFb', haveInFb)
+        if (haveInFb) {
+            Model.addUserInFB(name, id, avatar)
+        } else {
+            // console.log('нет')
+            // console.log('this.key = keyFromFb')
+            this.userKey = keyFromFb
+            localStorage.setItem('userKey', keyFromFb)
+        }
+
+        Controller.renderUsers()
+        Controller.renderMessages()
+
+    },
+    checkAuth() {
 
         if (!(localStorage.getItem('nickName') || localStorage.getItem('uid'))) {
             View.auth(this.chat.chat)
@@ -154,9 +163,18 @@ window.Controller = {
     userEnter(e, click) {
         let validName = false
         let validNickName = false
-
         let name = this.chat.inputName.value
         let nickName = this.chat.inputNickName.value
+        let newNickName = true
+
+        for (let user in this.chat.usersInFB) {
+            // console.log(this.chat.usersInFB[user].id === nickName)
+            if (this.chat.usersInFB[user].id === nickName) {
+                console.log(this.chat.usersInFB[user].id === nickName)
+                newNickName = false
+            }
+        }
+
 
         if (e.target.className.match('js-user-name') || click) {      //todo: рефакторинг
             if (this.chat.inputName.value.length > 1) {
@@ -170,7 +188,8 @@ window.Controller = {
         }
 
         if (e.target.className.match('js-user-nickName') || click) {
-            if (this.chat.inputNickName.value.length > 1) {
+
+            if (this.chat.inputNickName.value.length > 1 && newNickName) {
                 validNickName = true
                 this.chat.inputNickName.parentNode.classList.add('_isValid')
                 this.chat.inputNickName.parentNode.classList.remove('_isNoValid')
@@ -180,21 +199,20 @@ window.Controller = {
             }
         }
 
-        if (validName && validNickName) {
-            //     console.log(validName && validNickName)
-            // }
-            // if (false) {
+        if (validName && validNickName && newNickName) {
+            console.log(validName)
+            console.log(validNickName)
+            console.log(newNickName)
             localStorage.setItem('name', name)
             localStorage.setItem('nickName', nickName)
             localStorage.setItem('id', nickName)
             localStorage.setItem('ava', '')
-            console.log('nickName', nickName)
 
             View.popupClose(this.chat.popups, this.chat.chat)
             Model.addUserInFB(name, nickName, false)
             View.userAuthUpdateUI(name, '')
 
-            this.id = name
+            this.id = nickName
             this.nickName = nickName
             this.avatar = false
             this.auth = true
@@ -204,12 +222,10 @@ window.Controller = {
         }
     },
     sendMessage() {
-        // console.log('sendMessage')
         this.id = localStorage.getItem('uid') || localStorage.getItem('nickName')
         this.name = localStorage.getItem('name')
 
         let emptyMessage = false
-
         let text = this.chat.text.value
             // .replace(/<(?!br\s*\/?)[^>]+>/g, '')
             .replace(/<\/?[^>]+(>|$)/g, "")
@@ -251,10 +267,32 @@ window.Controller = {
                     Model.sendMessageInFB(message)
                 }
             }
+            Model.sendUserLastMessage(text.replace('<br/>', ''), this.userKey)
         }
         document.querySelector('.js-text').value = '';
     },
+    userExit() {
+        localStorage.removeItem('name')
+        localStorage.removeItem('nickName')
+        localStorage.removeItem('id')
+        localStorage.removeItem('uid')
+        localStorage.removeItem('ava')
+        localStorage.removeItem('usersInFB')
+        localStorage.removeItem('usersArr')
+        localStorage.removeItem('userKey')
 
+
+        View.popupClose(this.chat.popups, this.chat.chat)
+        View.userRemoveUI(name, '')
+
+        this.id = ''
+        this.nickName = ''
+        this.avatar = false
+        this.auth = false
+        Model.userDelete(this.userKey)
+        View.auth(this.chat.chat)
+        Controller.renderUsers()
+    },
     eventsListener() {
         document.addEventListener('click', (e) => {
             e.preventDefault()
@@ -278,12 +316,15 @@ window.Controller = {
                 if (className.match('js-auth-vk')) {
                     Controller.userAuth('vk')
                 }
+                if (className.match('js-panel-exit')) {
+                    Controller.userExit()
+                }
                 if (className.match('js-send')) {
                     // Controller.sendMessage(e, this.chat.localName, this.chat.localNickName, this.chat.text, chat)
                     Controller.sendMessage()
                 }
                 if (className.match('js-change-ava')) {
-                    this.chat.popupPhoto.classList.add('_open')
+                    // this.chat.popupPhoto.classList.add('_open')
                 }
 
             } else {
@@ -313,7 +354,7 @@ window.Controller = {
     },
     checkedIncoming() {
         Model.listenerNewMessages()
-        // Model.listenerNewUsers()
+        Model.listenerNewUsers()
     }
 }
 

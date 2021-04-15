@@ -60,7 +60,7 @@ window.Model = {
         })
         firebase.database().ref('chat').on('child_changed', function (snapshot) {
             // console.log('child_changed')
-            console.log('snapshot', snapshot.val().id)
+            // console.log('snapshot', snapshot.val().id)
             if (snapshot.val().id !== Controller.id) {
                 View.soundMessage()
             }
@@ -70,20 +70,35 @@ window.Model = {
     },
     listenerNewUsers() {
         firebase.database().ref('users').on('child_added', function (snapshot) {
+            // console.log('child_added')
             Controller.renderUsers()
 
         })
         firebase.database().ref('users').on('child_changed', function (snapshot) {
+            // console.log('child_changed')
             Controller.renderUsers()
+            Controller.renderMessages()
+
+        })
+        firebase.database().ref('users').on('child_removed', function (snapshot) {
+            // console.log('child_removed')
+            // console.log('snapshot.val().id', snapshot.val().id)
+            // console.log('Controller.id', Controller.id)
+            Controller.renderUsers()
+            if (snapshot.val().id === Controller.id) {
+                Controller.userExit(true)
+            }
         })
     },
     addUserInFB(name, id, avatar) {
         let key = firebase.database().ref().child('users').push().key;
+        // console.log('key', key)
         firebase.database().ref('users/' + key).update({
             name: name,
-            active: false,
+            active: true,
             id: id,
             avatar: avatar,
+            lastMessage: ''
         })
         Controller.userKey = key
         localStorage.setItem('userKey', key)
@@ -110,6 +125,10 @@ window.Model = {
             }, 2)
         })
     },
+    async userDelete(userKey) {
+        firebase.database().ref('users/' + userKey).remove()
+        await firebase.database().ref('users/' + userKey).onDisconnect().cancel();
+    },
     async vkAPI(method, params) {
         params.v = '5.76';
         return new Promise((res, rej) => {
@@ -122,21 +141,31 @@ window.Model = {
             })
         })
     },
-    async statusConnect() {
-        return new Promise(function (resolve, reject) {
+    async statusDisConnect(name, id, avatar, userKey) {
+        let presenceRef = firebase.database().ref('users/' + userKey + '/');
+        await presenceRef.onDisconnect().update({
+            active: false,
+        })
+    },
+    async statusConnect(name, id, avatar, key) {
+        let promise = new Promise(function (resolve, reject) {
             var connectedRef = firebase.database().ref(".info/connected");
             connectedRef.on("value", (snap) => {
                 if (snap.val() === true) {
-                    // console.log("connected");
                     resolve(snap.val())
+                    firebase.database().ref('users/' + key).update({
+                        name: name,
+                        active: true,
+                        id: id,
+                        avatar: avatar,
+                    })
+                    Controller.renderMessages()
                 } else {
-                    // console.log("not connected");
                 }
             });
         })
     },
     setStatus(name, id, avatar, key) {
-        // console.log('name, id, avatar, key', name, id, avatar, key)
         firebase.database().ref('users/' + key).update({
             name: name,
             active: true,
@@ -144,5 +173,11 @@ window.Model = {
             avatar: avatar,
         })
         Controller.renderMessages()
+    },
+    sendUserLastMessage(text, userKey) {
+        firebase.database().ref('users/' + userKey + '/').update({
+            lastMessage: text
+        });
     }
-}
+
+};

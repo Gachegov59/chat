@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     Controller.renderUsers()
     Controller.renderMessages()
     Controller.eventsListener()
+    Controller.statusDisConnect()
     Controller.status()
+
 
 })

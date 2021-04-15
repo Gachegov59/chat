@@ -5,7 +5,6 @@ window.View = {
     usersQuantityDiv: document.querySelector('.js-users-quantity'),
     render(templateName, model) {
         templateName = templateName + 'Template';
-        // console.log(templateName)
 
         const templateElement = document.querySelector(templateName).textContent
         // console.log(templateElement) //todo: хешировать? долго грузит
@@ -37,7 +36,11 @@ window.View = {
             Controller.chat.ava.style.backgroundSize = `cover`
             Controller.chat.ava.classList.add('_ava')
         }
-
+    },
+    userRemoveUI(name, avatar) {
+        Controller.chat.panelUserName.innerHTML = ''
+        Controller.chat.ava.classList.remove('_ava')
+        Controller.chat.ava.style.background = `var(--dark-five)`
     },
     popupClose(popups, chat) {
         chat.classList.remove('overlay')
